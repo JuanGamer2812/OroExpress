@@ -647,5 +647,72 @@
         "willMsg": {},
         "userProps": "",
         "sessionExpiry": ""
+    },
+    {
+        "id": "4a6c4000a585b138",
+        "type": "ui-page",
+        "name": "Page Name",
+        "ui": "98716454f0fdc5a0",
+        "path": "/page1",
+        "icon": "home",
+        "layout": "grid",
+        "theme": "c485642c20678668",
+        "breakpoints": [
+            {
+                "name": "Default",
+                "px": "0",
+                "cols": "3"
+            },
+            {
+                "name": "Tablet",
+                "px": "576",
+                "cols": "6"
+            },
+            {
+                "name": "Small Desktop",
+                "px": "768",
+                "cols": "9"
+            },
+            {
+                "name": "Desktop",
+                "px": "1024",
+                "cols": "12"
+            }
+        ],
+        "order": 1,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "68d33048fee1222b",
+        "type": "ui-group",
+        "name": "Group 1",
+        "page": "4a6c4000a585b138",
+        "width": 6,
+        "height": 1,
+        "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "de02f251e3c6285d",
+        "type": "ui-markdown",
+        "z": "003c4fb1a3e749fb",
+        "group": "68d33048fee1222b",
+        "name": "",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "content": "# Markdown Content\n\nGoes here...",
+        "className": "",
+        "x": 470,
+        "y": 200,
+        "wires": [
+            []
+        ]
     }
 ]
