@@ -707,7 +707,7 @@
         "order": 1,
         "width": 0,
         "height": 0,
-        "content": "# Markdown Content\n\nGoes here...",
+        "content": "# Markdown Content\n\nGoes here...\n\n<p>hola mundo</p>",
         "className": "",
         "x": 470,
         "y": 200,
