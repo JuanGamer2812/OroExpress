@@ -1,6 +1,6 @@
 {
     "name": "OroExpress",
-    "description": "A Node-RED Project",
+    "description": "Buses",
     "version": "0.0.1",
     "dependencies": {},
     "node-red": {
