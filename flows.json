@@ -756,7 +756,7 @@
         "y": 360,
         "wires": [
             [
-                "08c6d40246c4d79c"
+                "8198530f7faf0933"
             ],
             [
                 "e5edc4539f15b534"
@@ -770,28 +770,6 @@
             [
                 "48d003f68846d537"
             ]
-        ]
-    },
-    {
-        "id": "08c6d40246c4d79c",
-        "type": "ui-template",
-        "z": "003c4fb1a3e749fb",
-        "group": "ui-group-mapa",
-        "page": "",
-        "ui": "",
-        "name": "Mapa Vue Ref",
-        "order": 1,
-        "width": 0,
-        "height": 0,
-        "format": "<template>\n    <div style=\"padding: 10px;\">\n        <div ref=\"mapaTransit\" style=\"height: 480px; width: 100%; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 1;\"></div>\n    </div>\n</template>\n\n<script>\nexport default {\n    data() {\n        return {\n            // Solo datos simples aquí, NUNCA objetos complejos como mapas de Leaflet\n            rutaFija: [\n                [-3.2581, -79.9553], [-3.2845, -79.9612], [-3.3210, -79.9645],\n                [-3.3650, -79.9680], [-3.4120, -79.9650], [-3.4480, -79.9610],\n                [-3.4578, -79.9654]\n            ]\n        }\n    },\n    mounted() {\n        // Variables NO reactivas (para que Vue 3 no rompa Leaflet)\n        this.mapaLeaflet = null;\n        this.marcadorBus = null;\n\n        // Inyectar CSS dinámico\n        if (!document.getElementById('leaflet-css-transit')) {\n            const link = document.createElement('link');\n            link.id = 'leaflet-css-transit';\n            link.rel = 'stylesheet';\n            link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';\n            document.head.appendChild(link);\n        }\n\n        // Inyectar JS dinámico con retraso de seguridad\n        if (typeof window.L === 'undefined') {\n            const script = document.createElement('script');\n            script.id = 'leaflet-js-transit';\n            script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';\n            script.onload = () => { \n                setTimeout(() => this.iniciarMapa(), 150); \n            };\n            document.head.appendChild(script);\n        } else {\n            setTimeout(() => this.iniciarMapa(), 150);\n        }\n    },\n    methods: {\n        iniciarMapa() {\n            // Prevenir doble inicialización\n            if (!this.$refs.mapaTransit || this.mapaLeaflet) return;\n\n            // Inicializar mapa centrado en la ruta\n            this.mapaLeaflet = window.L.map(this.$refs.mapaTransit).setView([-3.35, -79.96], 11);\n\n            window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {\n                attribution: '© OpenStreetMap'\n            }).addTo(this.mapaLeaflet);\n\n            window.L.polyline(this.rutaFija, { \n                color: '#2B6CB0', weight: 4, dashArray: '5, 10' \n            }).addTo(this.mapaLeaflet);\n\n            this.marcadorBus = window.L.marker([-3.2581, -79.9553]).addTo(this.mapaLeaflet);\n            this.marcadorBus.bindPopup(\"Esperando señal GPS...\").openPopup();\n\n            // Forzar reajuste de tamaño por si el contenedor cambió\n            setTimeout(() => { this.mapaLeaflet.invalidateSize(); }, 300);\n        }\n    },\n    watch: {\n        msg: {\n            handler(newMsg) {\n                if (newMsg && newMsg.payload && this.mapaLeaflet && this.marcadorBus) {\n                    const data = newMsg.payload;\n                    // Confirmar que llega el objeto completo de coordenadas\n                    if (typeof data === 'object' && data.lat && data.lon) {\n                        const pos = [data.lat, data.lon];\n                        this.marcadorBus.setLatLng(pos);\n                        this.mapaLeaflet.panTo(pos);\n                        \n                        const popup = `\n                            <div style=\"font-family: sans-serif; font-size: 13px;\">\n                                <strong style=\"color:#2B6CB0;\">Unidad: ${data.busId}</strong><br>\n                                <b>Velocidad:</b> ${data.velocidad}<br>\n                                <b style=\"color:#E53E3E;\">ETA: ${data.eta}</b>\n                            </div>`;\n                        this.marcadorBus.bindPopup(popup).openPopup();\n                    }\n                }\n            },\n            deep: true\n        }\n    },\n    unmounted() {\n        // Limpiar la memoria si el usuario cambia de página en el dashboard\n        if (this.mapaLeaflet) {\n            this.mapaLeaflet.remove();\n            this.mapaLeaflet = null;\n        }\n    }\n}\n</script>",
-        "storeOutMessages": true,
-        "passthru": true,
-        "templateScope": "local",
-        "className": "",
-        "x": 880,
-        "y": 280,
-        "wires": [
-            []
         ]
     },
     {
@@ -823,7 +801,7 @@
         "type": "ui-text",
         "z": "003c4fb1a3e749fb",
         "group": "ui-group-info",
-        "order": 8,
+        "order": 4,
         "width": 0,
         "height": 0,
         "name": "",
@@ -847,7 +825,7 @@
         "type": "ui-text",
         "z": "003c4fb1a3e749fb",
         "group": "ui-group-info",
-        "order": 7,
+        "order": 3,
         "width": 0,
         "height": 0,
         "name": "",
@@ -864,7 +842,7 @@
         "type": "ui-text",
         "z": "003c4fb1a3e749fb",
         "group": "ui-group-info",
-        "order": 6,
+        "order": 2,
         "width": 0,
         "height": 0,
         "name": "",
@@ -947,7 +925,7 @@
         "name": "Select Destino",
         "label": "🔴 Punto de Destino",
         "tooltip": "",
-        "order": 4,
+        "order": 2,
         "width": 0,
         "height": 0,
         "passthru": true,
@@ -1048,6 +1026,28 @@
         "reg": false,
         "x": 600,
         "y": 260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "8198530f7faf0933",
+        "type": "ui-template",
+        "z": "003c4fb1a3e749fb",
+        "group": "ui-group-mapa",
+        "page": "",
+        "ui": "",
+        "name": "Mapa Vue Ref",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "format": "<template>\n    <div style=\"padding: 10px;\">\n        <div ref=\"mapaTransit\" style=\"height: 480px; width: 100%; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 1;\"></div>\n    </div>\n</template>\n\n<script>\nexport default {\n    data() {\n        return {\n            // Solo datos simples aquí, NUNCA objetos complejos como mapas de Leaflet\n            rutaFija: [\n                [-3.2581, -79.9553], [-3.2845, -79.9612], [-3.3210, -79.9645],\n                [-3.3650, -79.9680], [-3.4120, -79.9650], [-3.4480, -79.9610],\n                [-3.4578, -79.9654]\n            ]\n        }\n    },\n    mounted() {\n        // Variables NO reactivas (para que Vue 3 no rompa Leaflet)\n        this.mapaLeaflet = null;\n        this.marcadorBus = null;\n\n        // Inyectar CSS dinámico\n        if (!document.getElementById('leaflet-css-transit')) {\n            const link = document.createElement('link');\n            link.id = 'leaflet-css-transit';\n            link.rel = 'stylesheet';\n            link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';\n            document.head.appendChild(link);\n        }\n\n        // Inyectar JS dinámico con retraso de seguridad\n        if (typeof window.L === 'undefined') {\n            const script = document.createElement('script');\n            script.id = 'leaflet-js-transit';\n            script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';\n            script.onload = () => { \n                setTimeout(() => this.iniciarMapa(), 150); \n            };\n            document.head.appendChild(script);\n        } else {\n            setTimeout(() => this.iniciarMapa(), 150);\n        }\n    },\n    methods: {\n        iniciarMapa() {\n            // Prevenir doble inicialización\n            if (!this.$refs.mapaTransit || this.mapaLeaflet) return;\n\n            // Inicializar mapa centrado en la ruta\n            this.mapaLeaflet = window.L.map(this.$refs.mapaTransit).setView([-3.35, -79.96], 11);\n\n            window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {\n                attribution: '© OpenStreetMap'\n            }).addTo(this.mapaLeaflet);\n\n            window.L.polyline(this.rutaFija, { \n                color: '#2B6CB0', weight: 4, dashArray: '5, 10' \n            }).addTo(this.mapaLeaflet);\n\n            this.marcadorBus = window.L.marker([-3.2581, -79.9553]).addTo(this.mapaLeaflet);\n            this.marcadorBus.bindPopup(\"Esperando señal GPS...\").openPopup();\n\n            // Forzar reajuste de tamaño por si el contenedor cambió\n            setTimeout(() => { this.mapaLeaflet.invalidateSize(); }, 300);\n        }\n    },\n    watch: {\n        msg: {\n            handler(newMsg) {\n                if (newMsg && newMsg.payload && this.mapaLeaflet && this.marcadorBus) {\n                    const data = newMsg.payload;\n                    // Confirmar que llega el objeto completo de coordenadas\n                    if (typeof data === 'object' && data.lat && data.lon) {\n                        const pos = [data.lat, data.lon];\n                        this.marcadorBus.setLatLng(pos);\n                        this.mapaLeaflet.panTo(pos);\n                        \n                        const popup = `\n                            <div style=\"font-family: sans-serif; font-size: 13px;\">\n                                <strong style=\"color:#2B6CB0;\">Unidad: ${data.busId}</strong><br>\n                                <b>Velocidad:</b> ${data.velocidad}<br>\n                                <b style=\"color:#E53E3E;\">ETA: ${data.eta}</b>\n                            </div>`;\n                        this.marcadorBus.bindPopup(popup).openPopup();\n                    }\n                }\n            },\n            deep: true\n        }\n    },\n    unmounted() {\n        // Limpiar la memoria si el usuario cambia de página en el dashboard\n        if (this.mapaLeaflet) {\n            this.mapaLeaflet.remove();\n            this.mapaLeaflet = null;\n        }\n    }\n}\n</script>",
+        "storeOutMessages": true,
+        "passthru": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 880,
+        "y": 280,
         "wires": [
             []
         ]
