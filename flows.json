@@ -649,56 +649,6 @@
         "sessionExpiry": ""
     },
     {
-        "id": "4a6c4000a585b138",
-        "type": "ui-page",
-        "name": "Page Name",
-        "ui": "98716454f0fdc5a0",
-        "path": "/page1",
-        "icon": "home",
-        "layout": "grid",
-        "theme": "c485642c20678668",
-        "breakpoints": [
-            {
-                "name": "Default",
-                "px": "0",
-                "cols": "3"
-            },
-            {
-                "name": "Tablet",
-                "px": "576",
-                "cols": "6"
-            },
-            {
-                "name": "Small Desktop",
-                "px": "768",
-                "cols": "9"
-            },
-            {
-                "name": "Desktop",
-                "px": "1024",
-                "cols": "12"
-            }
-        ],
-        "order": 1,
-        "className": "",
-        "visible": "true",
-        "disabled": "false"
-    },
-    {
-        "id": "68d33048fee1222b",
-        "type": "ui-group",
-        "name": "Group 1",
-        "page": "4a6c4000a585b138",
-        "width": 6,
-        "height": 1,
-        "order": 1,
-        "showTitle": true,
-        "className": "",
-        "visible": "true",
-        "disabled": "false",
-        "groupType": "default"
-    },
-    {
         "id": "ui-page-smarttransit",
         "type": "ui-page",
         "name": "Monitoreo de Buses",
@@ -729,7 +679,7 @@
                 "cols": "12"
             }
         ],
-        "order": 2,
+        "order": 1,
         "className": "",
         "visible": "true",
         "disabled": "false"
@@ -759,7 +709,7 @@
         "groupType": "default"
     },
     {
-        "id": "inject-simulador",
+        "id": "b05f305bab8d74d5",
         "type": "inject",
         "z": "003c4fb1a3e749fb",
         "name": "Disparador (Cada 3s)",
@@ -771,69 +721,80 @@
         "repeat": "3",
         "crontab": "",
         "once": true,
-        "onceDelay": 0.1,
+        "onceDelay": 0.5,
         "topic": "",
-        "x": 340,
-        "y": 400,
+        "x": 360,
+        "y": 360,
         "wires": [
             [
-                "function-telemetria"
+                "d7d3c62bca1474a9"
             ]
         ]
     },
     {
-        "id": "function-telemetria",
+        "id": "d7d3c62bca1474a9",
         "type": "function",
         "z": "003c4fb1a3e749fb",
-        "name": "Simulador GPS y cálculo de ETA",
-        "func": "// Inicializar el índice de la ruta si no existe\nif (context.get('index') === undefined) {\n    context.set('index', 0);\n}\n\n// Ruta simplificada desde la Terminal Terrestre de Machala hasta Santa Rosa\nconst ruta = [\n    { lat: -3.2581, lon: -79.9553, stop: \"Terminal Terrestre de Machala\" },\n    { lat: -3.2845, lon: -79.9612, stop: \"Control de Entrada - El Cambio\" },\n    { lat: -3.3210, lon: -79.9645, stop: \"Vía Panamericana - Km 10\" },\n    { lat: -3.3650, lon: -79.9680, stop: \"Peaje El Guabo / Bifurcación\" },\n    { lat: -3.4120, lon: -79.9650, stop: \"Entrada a Santa Rosa\" },\n    { lat: -3.4480, lon: -79.9610, stop: \"Av. Joffre Lima\" },\n    { lat: -3.4578, lon: -79.9654, stop: \"Terminal Terrestre de Santa Rosa\" }\n];\n\nlet idx = context.get('index');\nlet puntoActual = ruta[idx];\n\n// Cálculo de tiempo estimado de llegada (ETA) aproximado\n// Cada segmento simulado representa unos 4 minutos reales de viaje restante\nlet segmentosRestantes = (ruta.length - 1) - idx;\nlet etaMinutos = segmentosRestantes * 4;\nlet etaStr = etaMinutos === 0 ? \"Ha llegado a su destino\" : etaMinutos + \" min\";\n\n// Generar velocidad simulada con fluctuación\nlet velocidadSimulada = etaMinutos === 0 ? 0 : Math.floor(Math.random() * (65 - 42 + 1)) + 42;\n\n// Construir el payload de telemetría IoT\nmsg.payload = {\n    busId: \"COOP-ORO-04\",\n    lat: puntoActual.lat,\n    lon: puntoActual.lon,\n    velocidad: velocidadSimulada + \" km/h\",\n    eta: etaStr,\n    proximaParada: idx === ruta.length - 1 ? \"Fin del trayecto\" : ruta[idx + 1].stop,\n    paradaActual: puntoActual.stop\n};\n\n// Avanzar en la ruta o reiniciar si llega al final\nidx = (idx + 1) % ruta.length;\ncontext.set('index', idx);\n\nreturn msg;",
-        "outputs": 1,
-        "timeout": "",
+        "name": "Simulador de 5 salidas",
+        "func": "if (context.get('index') === undefined) {\n    context.set('index', 0);\n}\n\nconst ruta = [\n    { lat: -3.2581, lon: -79.9553, stop: \"Terminal Terrestre de Machala\" },\n    { lat: -3.2845, lon: -79.9612, stop: \"Control de Entrada - El Cambio\" },\n    { lat: -3.3210, lon: -79.9645, stop: \"Vía Panamericana - Km 10\" },\n    { lat: -3.3650, lon: -79.9680, stop: \"Peaje El Guabo / Bifurcación\" },\n    { lat: -3.4120, lon: -79.9650, stop: \"Entrada a Santa Rosa\" },\n    { lat: -3.4480, lon: -79.9610, stop: \"Av. Joffre Lima\" },\n    { lat: -3.4578, lon: -79.9654, stop: \"Terminal Terrestre de Santa Rosa\" }\n];\n\nlet idx = context.get('index');\nlet puntoActual = ruta[idx];\n\nlet segmentosRestantes = (ruta.length - 1) - idx;\nlet etaMinutos = segmentosRestantes * 4;\nlet etaStr = etaMinutos === 0 ? \"Ha llegado a su destino\" : etaMinutos + \" min\";\nlet velocidadSimulada = etaMinutos === 0 ? 0 : Math.floor(Math.random() * (65 - 42 + 1)) + 42;\n\nlet payloadObj = {\n    busId: \"COOP-ORO-04\",\n    lat: puntoActual.lat,\n    lon: puntoActual.lon,\n    velocidad: velocidadSimulada + \" km/h\",\n    eta: etaStr,\n    proximaParada: idx === ruta.length - 1 ? \"Fin del trayecto\" : ruta[idx + 1].stop,\n    paradaActual: puntoActual.stop\n};\n\nidx = (idx + 1) % ruta.length;\ncontext.set('index', idx);\n\n// Retornar 5 mensajes separados para cada nodo, así evitamos [object Object]\nreturn [\n    { payload: payloadObj },\n    { payload: payloadObj.busId },\n    { payload: payloadObj.eta },\n    { payload: payloadObj.velocidad },\n    { payload: payloadObj.proximaParada }\n];",
+        "outputs": 5,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
         "x": 610,
-        "y": 400,
+        "y": 360,
         "wires": [
             [
-                "ui-template-mapa",
-                "ui-text-bus",
-                "ui-text-eta",
-                "ui-text-velocidad",
-                "ui-text-parada"
+                "08c6d40246c4d79c"
+            ],
+            [
+                "e5edc4539f15b534"
+            ],
+            [
+                "7b9a9222c4e1df41"
+            ],
+            [
+                "baf14e9d745a4c34"
+            ],
+            [
+                "48d003f68846d537"
             ]
         ]
     },
     {
-        "id": "ui-template-mapa",
+        "id": "08c6d40246c4d79c",
         "type": "ui-template",
         "z": "003c4fb1a3e749fb",
         "group": "ui-group-mapa",
-        "name": "Mapa Leaflet interactivo",
+        "page": "",
+        "ui": "",
+        "name": "Mapa Vue Ref",
         "order": 1,
         "width": 0,
         "height": 0,
-        "format": "<template>\n    <div style=\"padding: 10px;\">\n        <div id=\"leaflet-map-transit\" style=\"height: 480px; width: 100%; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);\"></div>\n    </div>\n</template>\n\n<script>\nexport default {\n    name: 'LeafletTransitMap',\n    data() {\n        return {\n            map: null,\n            marker: null,\n            polyline: null,\n            // Coordenadas fijas de la ruta completa para pintar la línea base\n            rutaFija: [\n                [-3.2581, -79.9553],\n                [-3.2845, -79.9612],\n                [-3.3210, -79.9645],\n                [-3.3650, -79.9680],\n                [-3.4120, -79.9650],\n                [-3.4480, -79.9610],\n                [-3.4578, -79.9654]\n            ]\n        }\n    },\n    mounted() {\n        // Inyectar dinámicamente estilos CSS de Leaflet si no están en el documento\n        if (!document.getElementById('leaflet-css')) {\n            const link = document.createElement('link');\n            link.id = 'leaflet-css';\n            link.rel = 'stylesheet';\n            link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';\n            document.head.appendChild(link);\n        }\n\n        // Inyectar script JS de Leaflet si no está cargado\n        if (typeof L === 'undefined') {\n            const script = document.createElement('script');\n            script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';\n            script.onload = () => {\n                this.initMap();\n            };\n            document.head.appendChild(script);\n        } else {\n            this.initMap();\n        }\n    },\n    methods: {\n        initMap() {\n            // Inicializar mapa centrado entre Machala y Santa Rosa\n            this.map = L.map('leaflet-map-transit').setView([-3.35, -79.96], 11);\n            \n            // Capa base de OpenStreetMap de diseño limpio\n            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {\n                attribution: '© OpenStreetMap'\n            }).addTo(this.map);\n\n            // Dibujar la trayectoria completa en color gris/azul para diseño refinado\n            this.polyline = L.polyline(this.rutaFija, {\n                color: '#4A5568',\n                weight: 4,\n                opacity: 0.6,\n                dashArray: '5, 10'\n            }).addTo(this.map);\n\n            // Inicializar el marcador del autobús (posición Machala por defecto)\n            this.marker = L.marker([-3.2581, -79.9553]).addTo(this.map);\n            this.marker.bindPopup(\"<b>Esperando datos de telemetría...</b>\").openPopup();\n        }\n    },\n    watch: {\n        // En Dashboard 2.0, vigilamos la propiedad reactiva 'msg' que Node-RED inyecta automáticamente\n        msg: {\n            handler(newMsg) {\n                if (newMsg && newMsg.payload && this.map && this.marker) {\n                    const data = newMsg.payload;\n                    if (data.lat && data.lon) {\n                        const nuevaPos = [data.lat, data.lon];\n                        \n                        // Actualizar marcador con animación suave o directa\n                        this.marker.setLatLng(nuevaPos);\n                        \n                        // Centrar suavemente el mapa en el bus en movimiento\n                        this.map.panTo(nuevaPos);\n                        \n                        // Actualizar globo de información dinámica con FontAwesome integrado\n                        const popupContent = `\n                            <div style=\"font-family: sans-serif; font-size: 13px;\">\n                                <strong style=\"color:#2B6CB0;\"><i class=\"fa fa-bus\"></i> Unid: ${data.busId}</strong><br>\n                                <b>Estado:</b> ${data.paradaActual}<br>\n                                <b>Velocidad:</b> ${data.velocidad}<br>\n                                <b style=\"color:#E53E3E;\">ETA: ${data.eta}</b>\n                            </div>\n                        `;\n                        this.marker.bindPopup(popupContent).openPopup();\n                    }\n                }\n            },\n            deep: True\n        }\n    }\n}\n</script>",
+        "format": "<template>\n    <div style=\"padding: 5px;\">\n        <!-- Usamos ref en lugar de ID para que Vue 3 no se confunda -->\n        <div ref=\"mapContainer\" style=\"height: 480px; width: 100%; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); z-index: 1;\"></div>\n    </div>\n</template>\n\n<script>\nexport default {\n    data() {\n        return {\n            map: null,\n            marker: null,\n            rutaFija: [\n                [-3.2581, -79.9553], [-3.2845, -79.9612], [-3.3210, -79.9645],\n                [-3.3650, -79.9680], [-3.4120, -79.9650], [-3.4480, -79.9610],\n                [-3.4578, -79.9654]\n            ]\n        }\n    },\n    mounted() {\n        this.cargarDependencias();\n    },\n    methods: {\n        cargarDependencias() {\n            if (!document.getElementById('leaflet-css')) {\n                const link = document.createElement('link');\n                link.id = 'leaflet-css';\n                link.rel = 'stylesheet';\n                link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';\n                document.head.appendChild(link);\n            }\n\n            if (typeof L === 'undefined') {\n                const script = document.createElement('script');\n                script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';\n                script.onload = () => { this.iniciarMapa(); };\n                document.head.appendChild(script);\n            } else {\n                this.iniciarMapa();\n            }\n        },\n        iniciarMapa() {\n            // Verificar que el contenedor de Vue exista antes de pintar\n            if (!this.$refs.mapContainer) return;\n            \n            this.map = L.map(this.$refs.mapContainer).setView([-3.35, -79.96], 11);\n            \n            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {\n                attribution: '© OSMap'\n            }).addTo(this.map);\n\n            L.polyline(this.rutaFija, { color: '#2B6CB0', weight: 4, dashArray: '5, 10' }).addTo(this.map);\n\n            this.marker = L.marker([-3.2581, -79.9553]).addTo(this.map);\n            this.marker.bindPopup(\"Esperando señal GPS...\").openPopup();\n        }\n    },\n    watch: {\n        msg: {\n            handler(newMsg) {\n                if (newMsg && newMsg.payload && this.map && this.marker) {\n                    const data = newMsg.payload;\n                    if (data.lat && data.lon) {\n                        const pos = [data.lat, data.lon];\n                        this.marker.setLatLng(pos);\n                        this.map.panTo(pos);\n                        this.marker.bindPopup(`<b>Unidad: ${data.busId}</b><br>ETA: ${data.eta}`).openPopup();\n                    }\n                }\n            },\n            deep: true\n        }\n    }\n}\n</script>",
+        "storeOutMessages": true,
+        "passthru": true,
         "templateScope": "local",
         "className": "",
-        "x": 900,
-        "y": 300,
+        "x": 890,
+        "y": 260,
         "wires": [
             []
         ]
     },
     {
-        "id": "ui-text-bus",
+        "id": "e5edc4539f15b534",
         "type": "ui-text",
         "z": "003c4fb1a3e749fb",
         "group": "ui-group-info",
         "order": 1,
         "width": 0,
         "height": 0,
-        "name": "Texto Identificador",
+        "name": "",
         "label": "🚌 Unidad Monitoreada:",
-        "format": "{{msg.payload.busId}}",
+        "format": "{{msg.payload}}",
         "layout": "row-spread",
         "style": false,
         "font": "",
@@ -843,21 +804,21 @@
         "className": "",
         "value": "payload",
         "valueType": "msg",
-        "x": 900,
-        "y": 360,
+        "x": 910,
+        "y": 320,
         "wires": []
     },
     {
-        "id": "ui-text-eta",
+        "id": "7b9a9222c4e1df41",
         "type": "ui-text",
         "z": "003c4fb1a3e749fb",
         "group": "ui-group-info",
         "order": 2,
         "width": 0,
         "height": 0,
-        "name": "Texto ETA",
-        "label": "⏱️ Tiempo Estimado (ETA):",
-        "format": "{{msg.payload.eta}}",
+        "name": "",
+        "label": "⏱️ ETA:",
+        "format": "{{msg.payload}}",
         "layout": "row-spread",
         "style": false,
         "font": "",
@@ -867,42 +828,42 @@
         "className": "",
         "value": "payload",
         "valueType": "msg",
-        "x": 890,
-        "y": 420,
+        "x": 870,
+        "y": 380,
         "wires": []
     },
     {
-        "id": "ui-text-velocidad",
+        "id": "baf14e9d745a4c34",
         "type": "ui-text",
         "z": "003c4fb1a3e749fb",
         "group": "ui-group-info",
         "order": 3,
         "width": 0,
         "height": 0,
-        "name": "Texto Velocidad",
-        "label": "⚡ Velocidad Actual:",
-        "format": "{{msg.payload.velocidad}}",
+        "name": "",
+        "label": "⚡ Velocidad:",
+        "format": "{{msg.payload}}",
         "layout": "row-spread",
         "className": "",
-        "x": 910,
-        "y": 480,
+        "x": 880,
+        "y": 440,
         "wires": []
     },
     {
-        "id": "ui-text-parada",
+        "id": "48d003f68846d537",
         "type": "ui-text",
         "z": "003c4fb1a3e749fb",
         "group": "ui-group-info",
         "order": 4,
         "width": 0,
         "height": 0,
-        "name": "Texto Próxima Parada",
+        "name": "",
         "label": "📍 Próxima Parada:",
-        "format": "{{msg.payload.proximaParada}}",
+        "format": "{{msg.payload}}",
         "layout": "row-spread",
         "className": "",
-        "x": 920,
-        "y": 540,
+        "x": 900,
+        "y": 500,
         "wires": []
     }
 ]
