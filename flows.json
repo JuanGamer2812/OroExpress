@@ -1,6 +1,6 @@
 [
     {
-        "id": "flow_buses_ff2_plus",
+        "id": "a16bf8cc0b1cfe29",
         "type": "tab",
         "label": "Buses Dashboard 2.0 Ampliado",
         "disabled": false,
@@ -704,80 +704,6 @@
         "className": ""
     },
     {
-        "id": "2808f5520e23d629",
-        "type": "ui-page",
-        "name": "Monitoreo de Buses",
-        "ui": "98716454f0fdc5a0",
-        "path": "/",
-        "icon": "mdi-bus",
-        "layout": "grid",
-        "theme": "ui_theme",
-        "breakpoints": [
-            {
-                "name": "Default",
-                "px": "0",
-                "cols": "3"
-            },
-            {
-                "name": "Tablet",
-                "px": "576",
-                "cols": "6"
-            },
-            {
-                "name": "Desktop",
-                "px": "1024",
-                "cols": "12"
-            }
-        ],
-        "order": 1,
-        "className": "",
-        "visible": true
-    },
-    {
-        "id": "b29491c471683909",
-        "type": "ui-group",
-        "name": "🛣️ Selección de Ruta",
-        "page": "2808f5520e23d629",
-        "width": "6",
-        "height": "1",
-        "order": 1,
-        "className": "",
-        "visible": true
-    },
-    {
-        "id": "45a012af32e343f5",
-        "type": "ui-group",
-        "name": "🗺️ Mapa en Tiempo Real",
-        "page": "2808f5520e23d629",
-        "width": "12",
-        "height": "1",
-        "order": 2,
-        "className": "",
-        "visible": true
-    },
-    {
-        "id": "97e6e90185af2140",
-        "type": "ui-group",
-        "name": "⏱ ETA Próximo Bus",
-        "page": "2808f5520e23d629",
-        "width": "3",
-        "height": "1",
-        "order": 3,
-        "className": "",
-        "visible": true
-    },
-    {
-        "id": "8a98a5bdcba64583",
-        "type": "ui-group",
-        "name": "📊 Tabla de Tiempos",
-        "page": "2808f5520e23d629",
-        "width": "9",
-        "height": "1",
-        "order": 4,
-        "className": "",
-        "visible": true
-    },
-    {
         "id": "ui_theme_buses_plus",
         "type": "ui-theme",
         "name": "Tema Oscuro Transporte Pro",
@@ -804,7 +730,7 @@
         "icon": "bus-clock",
         "layout": "grid",
         "theme": "ui_theme_buses_plus",
-        "order": 2,
+        "order": 1,
         "className": "",
         "visible": "true",
         "disabled": "false"
@@ -823,9 +749,9 @@
         "disabled": "false"
     },
     {
-        "id": "cmt_title",
+        "id": "cc121a07f94669de",
         "type": "comment",
-        "z": "flow_buses_ff2_plus",
+        "z": "a16bf8cc0b1cfe29",
         "name": "Dashboard 2.0 ampliado - Monitoreo de buses",
         "info": "Instala @flowfuse/node-red-dashboard. Este flujo usa ui-template, funciones, APIs HTTP y simulación de flota.",
         "x": 260,
@@ -833,9 +759,9 @@
         "wires": []
     },
     {
-        "id": "cmt_init",
+        "id": "62072c2d8409dd8d",
         "type": "comment",
-        "z": "flow_buses_ff2_plus",
+        "z": "a16bf8cc0b1cfe29",
         "name": "1) Inicialización: catálogo de rutas, paradas y flota",
         "info": "Carga rutas reales/referenciales y buses simulados en flow context.",
         "x": 280,
@@ -843,9 +769,9 @@
         "wires": []
     },
     {
-        "id": "inj_init",
+        "id": "771fafaa1c77ebd4",
         "type": "inject",
-        "z": "flow_buses_ff2_plus",
+        "z": "a16bf8cc0b1cfe29",
         "name": "Inicializar al desplegar",
         "props": [
             {
@@ -867,14 +793,14 @@
         "y": 160,
         "wires": [
             [
-                "fn_init"
+                "4c8e0f9f2a790b5b"
             ]
         ]
     },
     {
-        "id": "fn_init",
+        "id": "4c8e0f9f2a790b5b",
         "type": "function",
-        "z": "flow_buses_ff2_plus",
+        "z": "a16bf8cc0b1cfe29",
         "name": "Crear rutas reales/referenciales + flota",
         "func": "\n// 1) CATÁLOGO BASE DEL SISTEMA\n// Este nodo carga rutas, paradas y una flota simulada en memoria de flow.\n// Las rutas usan lugares reales/referenciales de Machala, Puerto Bolívar,\n// Santa Rosa, Pasaje y El Guabo. Los horarios/ETAs son simulados.\n\nfunction haversineKm(a, b) {\n    const R = 6371;\n    const dLat = (b.lat - a.lat) * Math.PI / 180;\n    const dLng = (b.lng - a.lng) * Math.PI / 180;\n    const lat1 = a.lat * Math.PI / 180;\n    const lat2 = b.lat * Math.PI / 180;\n    const s = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;\n    return 2 * R * Math.asin(Math.sqrt(s));\n}\n\nfunction computeDistance(stops) {\n    let km = 0;\n    for (let i = 0; i < stops.length - 1; i++) km += haversineKm(stops[i], stops[i + 1]);\n    return Math.max(0.2, Number(km.toFixed(2)));\n}\n\nconst routes = [\n    {\n        id: 'R01', line: 'Aeropuerto', name: 'Terminal Machala → Aeropuerto Regional Santa Rosa',\n        origin: 'P01 — Terminal Terrestre Machala', destination: 'P09 — Aeropuerto Regional Santa Rosa',\n        color: '#38bdf8', durationMin: 45, headwayMin: 12, busCount: 6, trafficBase: 1.04,\n        sourceNote: 'Corredor referencial Machala - Santa Rosa - Aeropuerto SERO.',\n        stops: [\n            { code: 'P01', name: 'Terminal Terrestre Machala', lat: -3.2546, lng: -79.9316, type: 'terminal' },\n            { code: 'P02', name: 'Av. Ferroviaria / Norte', lat: -3.2526, lng: -79.9264, type: 'parada' },\n            { code: 'P03', name: 'El Cambio', lat: -3.2480, lng: -79.9138, type: 'parada' },\n            { code: 'P04', name: 'Vía Balosa / E25', lat: -3.2935, lng: -79.9238, type: 'parada' },\n            { code: 'P05', name: 'Santa Rosa Centro', lat: -3.4489, lng: -79.9588, type: 'parada' },\n            { code: 'P09', name: 'Aeropuerto Regional Santa Rosa', lat: -3.4361, lng: -79.9839, type: 'destino' }\n        ]\n    },\n    {\n        id: 'R02', line: 'Puerto', name: 'Terminal Machala → Puerto Bolívar',\n        origin: 'P01 — Terminal Terrestre Machala', destination: 'P15 — Malecón Puerto Bolívar',\n        color: '#22c55e', durationMin: 28, headwayMin: 8, busCount: 7, trafficBase: 1.10,\n        sourceNote: 'Corredor urbano hacia Puerto Bolívar.',\n        stops: [\n            { code: 'P01', name: 'Terminal Terrestre Machala', lat: -3.2546, lng: -79.9316, type: 'terminal' },\n            { code: 'P10', name: 'Parque Juan Montalvo', lat: -3.2586, lng: -79.9604, type: 'parada' },\n            { code: 'P11', name: 'Mercado Central', lat: -3.2626, lng: -79.9598, type: 'parada' },\n            { code: 'P12', name: 'Hospital Teófilo Dávila', lat: -3.2574, lng: -79.9635, type: 'hospital' },\n            { code: 'P13', name: 'Av. Bolívar Madero Vargas', lat: -3.2608, lng: -79.9832, type: 'parada' },\n            { code: 'P15', name: 'Malecón Puerto Bolívar', lat: -3.2665, lng: -79.9975, type: 'destino' }\n        ]\n    },\n    {\n        id: 'R03', line: 'UTMACH', name: 'Centro de Machala → UTMACH',\n        origin: 'P10 — Parque Juan Montalvo', destination: 'P22 — Universidad Técnica de Machala',\n        color: '#f59e0b', durationMin: 24, headwayMin: 10, busCount: 5, trafficBase: 0.97,\n        sourceNote: 'Corredor centro - vía Machala/Pasaje - UTMACH.',\n        stops: [\n            { code: 'P10', name: 'Parque Juan Montalvo', lat: -3.2586, lng: -79.9604, type: 'origen' },\n            { code: 'P16', name: 'Av. 25 de Junio', lat: -3.2625, lng: -79.9556, type: 'parada' },\n            { code: 'P17', name: 'Circunvalación Sur', lat: -3.2734, lng: -79.9418, type: 'parada' },\n            { code: 'P18', name: 'Vía Machala - Pasaje', lat: -3.2845, lng: -79.9277, type: 'parada' },\n            { code: 'P22', name: 'Universidad Técnica de Machala', lat: -3.2926, lng: -79.9142, type: 'destino' }\n        ]\n    },\n    {\n        id: 'R04', line: 'El Cambio', name: 'Terminal Machala → El Cambio',\n        origin: 'P01 — Terminal Terrestre Machala', destination: 'P03 — El Cambio',\n        color: '#a78bfa', durationMin: 18, headwayMin: 7, busCount: 4, trafficBase: 0.88,\n        sourceNote: 'Corredor corto de conexión terminal - parroquia El Cambio.',\n        stops: [\n            { code: 'P01', name: 'Terminal Terrestre Machala', lat: -3.2546, lng: -79.9316, type: 'terminal' },\n            { code: 'P02', name: 'Av. Ferroviaria / Norte', lat: -3.2526, lng: -79.9264, type: 'parada' },\n            { code: 'P19', name: 'Redondel Norte', lat: -3.2505, lng: -79.9208, type: 'parada' },\n            { code: 'P03', name: 'El Cambio', lat: -3.2480, lng: -79.9138, type: 'destino' }\n        ]\n    },\n    {\n        id: 'R05', line: 'Circular Centro', name: 'Puerto Bolívar → Centro → Terminal',\n        origin: 'P15 — Malecón Puerto Bolívar', destination: 'P01 — Terminal Terrestre Machala',\n        color: '#ef4444', durationMin: 32, headwayMin: 11, busCount: 6, trafficBase: 1.13,\n        sourceNote: 'Circuito urbano entre Puerto Bolívar, centro y terminal.',\n        stops: [\n            { code: 'P15', name: 'Malecón Puerto Bolívar', lat: -3.2665, lng: -79.9975, type: 'origen' },\n            { code: 'P13', name: 'Av. Bolívar Madero Vargas', lat: -3.2608, lng: -79.9832, type: 'parada' },\n            { code: 'P12', name: 'Hospital Teófilo Dávila', lat: -3.2574, lng: -79.9635, type: 'hospital' },\n            { code: 'P10', name: 'Parque Juan Montalvo', lat: -3.2586, lng: -79.9604, type: 'parada' },\n            { code: 'P01', name: 'Terminal Terrestre Machala', lat: -3.2546, lng: -79.9316, type: 'destino' }\n        ]\n    },\n    {\n        id: 'R06', line: 'Pasaje', name: 'Terminal Machala → Pasaje',\n        origin: 'P01 — Terminal Terrestre Machala', destination: 'P30 — Pasaje Centro',\n        color: '#06b6d4', durationMin: 42, headwayMin: 15, busCount: 5, trafficBase: 1.02,\n        sourceNote: 'Corredor interurbano referencial Machala - Pasaje.',\n        stops: [\n            { code: 'P01', name: 'Terminal Terrestre Machala', lat: -3.2546, lng: -79.9316, type: 'terminal' },\n            { code: 'P18', name: 'Vía Machala - Pasaje', lat: -3.2845, lng: -79.9277, type: 'parada' },\n            { code: 'P22', name: 'Universidad Técnica de Machala', lat: -3.2926, lng: -79.9142, type: 'parada' },\n            { code: 'P27', name: 'La Peaña', lat: -3.3196, lng: -79.8472, type: 'parada' },\n            { code: 'P30', name: 'Pasaje Centro', lat: -3.3275, lng: -79.8068, type: 'destino' }\n        ]\n    },\n    {\n        id: 'R07', line: 'Santa Rosa', name: 'Santa Rosa Centro → Aeropuerto Regional',\n        origin: 'P05 — Santa Rosa Centro', destination: 'P09 — Aeropuerto Regional Santa Rosa',\n        color: '#84cc16', durationMin: 16, headwayMin: 9, busCount: 4, trafficBase: 0.82,\n        sourceNote: 'Conexión local Santa Rosa - aeropuerto.',\n        stops: [\n            { code: 'P05', name: 'Santa Rosa Centro', lat: -3.4489, lng: -79.9588, type: 'origen' },\n            { code: 'P31', name: 'Av. Joffre Lima', lat: -3.4440, lng: -79.9668, type: 'parada' },\n            { code: 'P32', name: 'Vía al Aeropuerto', lat: -3.4396, lng: -79.9759, type: 'parada' },\n            { code: 'P09', name: 'Aeropuerto Regional Santa Rosa', lat: -3.4361, lng: -79.9839, type: 'destino' }\n        ]\n    },\n    {\n        id: 'R08', line: 'El Guabo', name: 'Terminal Machala → El Guabo',\n        origin: 'P01 — Terminal Terrestre Machala', destination: 'P40 — El Guabo Centro',\n        color: '#fb7185', durationMin: 38, headwayMin: 14, busCount: 5, trafficBase: 1.00,\n        sourceNote: 'Corredor interurbano referencial Machala - El Guabo.',\n        stops: [\n            { code: 'P01', name: 'Terminal Terrestre Machala', lat: -3.2546, lng: -79.9316, type: 'terminal' },\n            { code: 'P19', name: 'Redondel Norte', lat: -3.2505, lng: -79.9208, type: 'parada' },\n            { code: 'P41', name: 'Vía Panamericana Norte', lat: -3.2352, lng: -79.9025, type: 'parada' },\n            { code: 'P42', name: 'Tillales', lat: -3.2007, lng: -79.8466, type: 'parada' },\n            { code: 'P40', name: 'El Guabo Centro', lat: -3.2438, lng: -79.8312, type: 'destino' }\n        ]\n    }\n];\n\nroutes.forEach((r, idx) => {\n    r.distanceKm = computeDistance(r.stops);\n    r.avgSpeedKmh = Number((r.distanceKm / (r.durationMin / 60)).toFixed(1));\n    r.order = idx + 1;\n});\n\nconst fleet = [];\nroutes.forEach((route, rIndex) => {\n    for (let i = 0; i < route.busCount; i++) {\n        fleet.push({\n            id: `BUS-${route.id.replace('R', '')}${String(i + 1).padStart(2, '0')}`,\n            plate: `EL-${route.id.replace('R', '')}${String(100 + i)}`,\n            routeId: route.id,\n            progress: (i / route.busCount + Math.random() * 0.05) % 1,\n            occupancy: Math.floor(25 + Math.random() * 58),\n            delayMin: Math.floor(Math.random() * 4),\n            active: true,\n            driver: ['Luis A.', 'Carlos M.', 'María P.', 'Jorge C.', 'Andrea S.', 'Pedro V.', 'Daniel R.'][(i + rIndex) % 7],\n            lastEvent: 'Inicializado'\n        });\n    }\n});\n\nflow.set('bus.routes', routes);\nflow.set('bus.fleet', fleet);\nflow.set('bus.selectedRouteId', 'R01');\nflow.set('bus.running', true);\nflow.set('bus.speedFactor', 1);\nflow.set('bus.lastTick', Date.now());\nflow.set('bus.alerts', []);\nflow.set('bus.dataMode', 'simulado');\nflow.set('bus.metadata', {\n    title: 'Sistema de Monitoreo de Buses - Machala / El Oro',\n    accuracy: 'Rutas con puntos geográficos reales/referenciales. Los ETA, ocupación, tráfico y placas son simulados para práctica académica.',\n    version: '2.0-dashboard-flowfuse-ampliado'\n});\n\nmsg.topic = 'system/initialized';\nmsg.payload = { ok: true, routes: routes.length, buses: fleet.length };\nreturn msg;\n",
         "outputs": 1,
@@ -887,14 +813,14 @@
         "y": 160,
         "wires": [
             [
-                "fn_snapshot"
+                "d89558d3af701134"
             ]
         ]
     },
     {
-        "id": "cmt_tick",
+        "id": "0c54277d018e310f",
         "type": "comment",
-        "z": "flow_buses_ff2_plus",
+        "z": "a16bf8cc0b1cfe29",
         "name": "2) Simulación: GPS, ocupación, tráfico y ETA cada segundo",
         "info": "Actualiza ubicación, velocidad, ocupación y retrasos.",
         "x": 315,
@@ -902,9 +828,9 @@
         "wires": []
     },
     {
-        "id": "inj_tick",
+        "id": "83a5a668bec4d8bd",
         "type": "inject",
-        "z": "flow_buses_ff2_plus",
+        "z": "a16bf8cc0b1cfe29",
         "name": "Pulso 1 segundo",
         "props": [
             {
@@ -926,14 +852,14 @@
         "y": 270,
         "wires": [
             [
-                "fn_tick"
+                "5ae320d5fea3d5a6"
             ]
         ]
     },
     {
-        "id": "fn_tick",
+        "id": "5ae320d5fea3d5a6",
         "type": "function",
-        "z": "flow_buses_ff2_plus",
+        "z": "a16bf8cc0b1cfe29",
         "name": "Motor GPS/ETA de buses",
         "func": "\n// 2) MOTOR DE SIMULACIÓN GPS/ETA\n// Cada segundo mueve los buses, recalcula ocupación, retrasos y estado operativo.\n\nfunction haversineKm(a, b) {\n    const R = 6371;\n    const dLat = (b.lat - a.lat) * Math.PI / 180;\n    const dLng = (b.lng - a.lng) * Math.PI / 180;\n    const lat1 = a.lat * Math.PI / 180;\n    const lat2 = b.lat * Math.PI / 180;\n    const s = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;\n    return 2 * R * Math.asin(Math.sqrt(s));\n}\n\nfunction pointAtProgress(route, progress) {\n    const stops = route.stops;\n    const total = route.distanceKm || 1;\n    const target = progress * total;\n    let acc = 0;\n    for (let i = 0; i < stops.length - 1; i++) {\n        const a = stops[i];\n        const b = stops[i + 1];\n        const d = haversineKm(a, b);\n        if (acc + d >= target) {\n            const ratio = d === 0 ? 0 : (target - acc) / d;\n            return {\n                lat: a.lat + (b.lat - a.lat) * ratio,\n                lng: a.lng + (b.lng - a.lng) * ratio,\n                segmentIndex: i,\n                nextStop: b,\n                prevStop: a\n            };\n        }\n        acc += d;\n    }\n    return {\n        lat: stops[stops.length - 1].lat,\n        lng: stops[stops.length - 1].lng,\n        segmentIndex: stops.length - 2,\n        nextStop: stops[stops.length - 1],\n        prevStop: stops[stops.length - 2]\n    };\n}\n\nconst routes = flow.get('bus.routes') || [];\nlet fleet = flow.get('bus.fleet') || [];\nconst running = flow.get('bus.running') !== false;\nconst speedFactor = Number(flow.get('bus.speedFactor') || 1);\nconst now = Date.now();\nconst last = Number(flow.get('bus.lastTick') || now);\nconst dt = Math.max(0.2, Math.min(3, (now - last) / 1000));\nflow.set('bus.lastTick', now);\n\nif (running && routes.length && fleet.length) {\n    fleet = fleet.map(bus => {\n        const route = routes.find(r => r.id === bus.routeId);\n        if (!route || !bus.active) return bus;\n\n        // Factor de tráfico dinámico: el tráfico cambia levemente para hacerlo más real.\n        const wave = 1 + Math.sin(now / 30000 + route.order) * 0.06;\n        const traffic = Math.max(0.72, Math.min(1.35, route.trafficBase * wave));\n        const durationSec = Math.max(60, route.durationMin * 60 * traffic);\n        const vehicleVariation = 0.92 + Math.random() * 0.18;\n        bus.progress = (bus.progress + (dt * speedFactor * vehicleVariation / durationSec)) % 1;\n\n        // Ocupación variable, pero controlada.\n        if (Math.random() > 0.68) {\n            bus.occupancy = Math.max(4, Math.min(100, bus.occupancy + Math.round((Math.random() - 0.48) * 9)));\n        }\n\n        // Retraso estimado en función de tráfico/ocupación.\n        const calculatedDelay = Math.max(0, Math.round((traffic - 1) * 11 + (bus.occupancy > 85 ? 3 : 0) + Math.random() * 2));\n        bus.delayMin = Math.round((bus.delayMin * 0.65) + (calculatedDelay * 0.35));\n        const p = pointAtProgress(route, bus.progress);\n        bus.lat = Number(p.lat.toFixed(6));\n        bus.lng = Number(p.lng.toFixed(6));\n        bus.nextStop = `${p.nextStop.code} — ${p.nextStop.name}`;\n        bus.prevStop = `${p.prevStop.code} — ${p.prevStop.name}`;\n        bus.segmentIndex = p.segmentIndex;\n        bus.traffic = Number(traffic.toFixed(2));\n        bus.speedKmh = Math.max(8, Math.round(route.avgSpeedKmh / traffic + (Math.random() - 0.5) * 4));\n        bus.lastEvent = 'GPS actualizado';\n        return bus;\n    });\n}\n\nflow.set('bus.fleet', fleet);\nmsg.topic = 'system/tick';\nmsg.payload = { tick: now, running, buses: fleet.length };\nreturn msg;\n",
         "outputs": 1,
@@ -946,14 +872,14 @@
         "y": 270,
         "wires": [
             [
-                "fn_snapshot"
+                "d89558d3af701134"
             ]
         ]
     },
     {
-        "id": "cmt_cmd",
+        "id": "36165a36115b5e8b",
         "type": "comment",
-        "z": "flow_buses_ff2_plus",
+        "z": "a16bf8cc0b1cfe29",
         "name": "3) Comandos desde el dashboard",
         "info": "El usuario cambia ruta, pausa, reinicia flota, cambia velocidad o desactiva una unidad.",
         "x": 260,
@@ -961,9 +887,9 @@
         "wires": []
     },
     {
-        "id": "fn_command",
+        "id": "6407dadf246d5b8c",
         "type": "function",
-        "z": "flow_buses_ff2_plus",
+        "z": "a16bf8cc0b1cfe29",
         "name": "Procesar comandos UI",
         "func": "\n// 3) COMANDOS DESDE EL DASHBOARD\n// El ui-template envía mensajes con topic cmd/* y este nodo cambia el estado del sistema.\n\nconst topic = msg.topic || '';\nconst payload = msg.payload || {};\nlet routes = flow.get('bus.routes') || [];\nlet fleet = flow.get('bus.fleet') || [];\n\nif (topic === 'cmd/selectRoute') {\n    const routeId = payload.routeId;\n    if (routes.some(r => r.id === routeId)) {\n        flow.set('bus.selectedRouteId', routeId);\n    }\n}\n\nif (topic === 'cmd/toggle') {\n    const current = flow.get('bus.running') !== false;\n    flow.set('bus.running', !current);\n}\n\nif (topic === 'cmd/setRunning') {\n    flow.set('bus.running', Boolean(payload.running));\n}\n\nif (topic === 'cmd/speed') {\n    const value = Number(payload.speedFactor || 1);\n    flow.set('bus.speedFactor', Math.max(0.25, Math.min(4, value)));\n}\n\nif (topic === 'cmd/resetFleet') {\n    fleet = fleet.map((bus, index) => {\n        const route = routes.find(r => r.id === bus.routeId);\n        const routeBuses = fleet.filter(b => b.routeId === bus.routeId);\n        const order = routeBuses.findIndex(b => b.id === bus.id);\n        return {\n            ...bus,\n            progress: ((order >= 0 ? order : index) / Math.max(1, route?.busCount || 1) + Math.random() * 0.05) % 1,\n            occupancy: Math.floor(18 + Math.random() * 52),\n            delayMin: Math.floor(Math.random() * 3),\n            active: true,\n            lastEvent: 'Flota reiniciada desde dashboard'\n        };\n    });\n    flow.set('bus.fleet', fleet);\n}\n\nif (topic === 'cmd/toggleBus') {\n    const busId = payload.busId;\n    fleet = fleet.map(bus => bus.id === busId ? { ...bus, active: !bus.active, lastEvent: 'Estado cambiado manualmente' } : bus);\n    flow.set('bus.fleet', fleet);\n}\n\nmsg.topic = 'system/command-applied';\nmsg.payload = { ok: true, command: topic, selectedRouteId: flow.get('bus.selectedRouteId') };\nreturn msg;\n",
         "outputs": 1,
@@ -976,14 +902,14 @@
         "y": 390,
         "wires": [
             [
-                "fn_snapshot"
+                "d89558d3af701134"
             ]
         ]
     },
     {
-        "id": "cmt_snapshot",
+        "id": "c99430b24f1bb4b8",
         "type": "comment",
-        "z": "flow_buses_ff2_plus",
+        "z": "a16bf8cc0b1cfe29",
         "name": "4) Snapshot: KPIs, tabla, alertas y mapa",
         "info": "Construye el mensaje final que recibe el ui-template.",
         "x": 920,
@@ -991,9 +917,9 @@
         "wires": []
     },
     {
-        "id": "fn_snapshot",
+        "id": "d89558d3af701134",
         "type": "function",
-        "z": "flow_buses_ff2_plus",
+        "z": "a16bf8cc0b1cfe29",
         "name": "Construir snapshot dashboard",
         "func": "\n// 4) CONSTRUCTOR DE SNAPSHOT PARA EL DASHBOARD\n// Junta rutas, flota, KPIs, tabla y alertas en un solo msg.payload.\n\nfunction clamp(n, min, max) { return Math.max(min, Math.min(max, n)); }\nfunction pct(n) { return Math.round(n); }\nfunction etaStatus(eta, occ, delay) {\n    if (occ >= 92) return { label: 'Lleno', cls: 'bad' };\n    if (delay >= 7 || eta >= 30) return { label: 'Demorado', cls: 'bad' };\n    if (delay >= 3 || eta >= 16 || occ >= 80) return { label: 'Moderado', cls: 'warn' };\n    return { label: 'A tiempo', cls: 'ok' };\n}\nfunction minutesToDestination(route, bus) {\n    const remain = Math.max(0, 1 - Number(bus.progress || 0));\n    return Math.max(0, Math.round(remain * route.durationMin * Number(bus.traffic || route.trafficBase || 1) + (bus.delayMin || 0)));\n}\nfunction minutesToOrigin(route, bus) {\n    const remainCycle = Number(bus.progress || 0) < 0.02 ? 0 : (1 - Number(bus.progress || 0));\n    return Math.max(0, Math.round(remainCycle * route.durationMin * Number(bus.traffic || route.trafficBase || 1)));\n}\n\nconst routes = flow.get('bus.routes') || [];\nconst fleet = flow.get('bus.fleet') || [];\nconst selectedRouteId = flow.get('bus.selectedRouteId') || (routes[0] && routes[0].id);\nconst selectedRoute = routes.find(r => r.id === selectedRouteId) || routes[0] || null;\nconst running = flow.get('bus.running') !== false;\nconst speedFactor = Number(flow.get('bus.speedFactor') || 1);\nconst metadata = flow.get('bus.metadata') || {};\nconst now = new Date();\n\nconst enriched = fleet.map(bus => {\n    const route = routes.find(r => r.id === bus.routeId) || {};\n    const etaOrigin = minutesToOrigin(route, bus);\n    const etaDest = minutesToDestination(route, bus);\n    const state = etaStatus(etaDest, bus.occupancy || 0, bus.delayMin || 0);\n    return {\n        ...bus,\n        routeName: route.name,\n        routeLine: route.line,\n        routeColor: route.color,\n        origin: route.origin,\n        destination: route.destination,\n        etaOrigin,\n        etaDest,\n        status: state.label,\n        statusClass: state.cls,\n        progressPct: pct((bus.progress || 0) * 100)\n    };\n});\n\nconst selectedBuses = enriched.filter(b => selectedRoute && b.routeId === selectedRoute.id && b.active);\nconst allActive = enriched.filter(b => b.active);\nconst avgOccupancy = allActive.length ? pct(allActive.reduce((s, b) => s + (b.occupancy || 0), 0) / allActive.length) : 0;\nconst routeAvgOcc = selectedBuses.length ? pct(selectedBuses.reduce((s, b) => s + (b.occupancy || 0), 0) / selectedBuses.length) : 0;\nconst delayed = allActive.filter(b => b.statusClass === 'bad').length;\nconst nextBus = selectedBuses.slice().sort((a, b) => a.etaOrigin - b.etaOrigin)[0] || null;\n\nlet alerts = [];\nenriched.forEach(b => {\n    if (!b.active) alerts.push({ level: 'warn', text: `${b.id} está fuera de servicio`, routeId: b.routeId });\n    if (b.occupancy >= 92) alerts.push({ level: 'bad', text: `${b.id} con ocupación crítica (${b.occupancy}%)`, routeId: b.routeId });\n    if (b.delayMin >= 7) alerts.push({ level: 'bad', text: `${b.id} presenta retraso de ${b.delayMin} min`, routeId: b.routeId });\n});\nif (selectedRoute && selectedRoute.trafficBase >= 1.1) {\n    alerts.push({ level: 'warn', text: `Tráfico alto en ${selectedRoute.id} ${selectedRoute.line}`, routeId: selectedRoute.id });\n}\nalerts = alerts.slice(0, 12);\nflow.set('bus.alerts', alerts);\n\nconst routeSummary = routes.map(route => {\n    const buses = enriched.filter(b => b.routeId === route.id && b.active);\n    const avgOcc = buses.length ? pct(buses.reduce((s, b) => s + b.occupancy, 0) / buses.length) : 0;\n    const minEta = buses.length ? Math.min(...buses.map(b => b.etaOrigin)) : null;\n    const bad = buses.filter(b => b.statusClass === 'bad').length;\n    return {\n        id: route.id,\n        line: route.line,\n        name: route.name,\n        origin: route.origin,\n        destination: route.destination,\n        color: route.color,\n        buses: buses.length,\n        avgOcc,\n        minEta,\n        bad,\n        distanceKm: route.distanceKm,\n        durationMin: route.durationMin,\n        headwayMin: route.headwayMin\n    };\n});\n\nconst table = enriched\n    .filter(b => selectedRoute ? b.routeId === selectedRoute.id : true)\n    .sort((a, b) => a.etaOrigin - b.etaOrigin)\n    .map(b => ({\n        bus: b.id,\n        plate: b.plate,\n        driver: b.driver,\n        routeId: b.routeId,\n        route: `${b.routeId} · ${b.routeLine}`,\n        origin: b.origin,\n        destination: b.destination,\n        nextStop: b.nextStop || b.destination,\n        etaOrigin: b.etaOrigin,\n        etaDest: b.etaDest,\n        occupancy: b.occupancy,\n        speedKmh: b.speedKmh || 0,\n        delayMin: b.delayMin || 0,\n        progressPct: b.progressPct,\n        active: b.active,\n        status: b.active ? b.status : 'Fuera de servicio',\n        statusClass: b.active ? b.statusClass : 'off',\n        lat: b.lat,\n        lng: b.lng\n    }));\n\nmsg.topic = 'dashboard/snapshot';\nmsg.payload = {\n    type: 'snapshot',\n    metadata,\n    selectedRouteId,\n    selectedRoute,\n    routes,\n    buses: enriched,\n    selectedBuses,\n    table,\n    routeSummary,\n    alerts,\n    running,\n    speedFactor,\n    kpi: {\n        activeTotal: allActive.length,\n        activeSelected: selectedBuses.length,\n        nextEta: nextBus ? nextBus.etaOrigin : null,\n        nextBus: nextBus ? nextBus.id : '—',\n        nextStop: nextBus ? nextBus.nextStop : '—',\n        avgOccupancy,\n        routeAvgOcc,\n        delayed,\n        alerts: alerts.length,\n        selectedDistanceKm: selectedRoute ? selectedRoute.distanceKm : 0,\n        selectedDurationMin: selectedRoute ? selectedRoute.durationMin : 0,\n        reliability: clamp(100 - delayed * 4 - Math.round(avgOccupancy / 20), 62, 99),\n        lastUpdate: now.toLocaleTimeString('es-EC', { hour12: false })\n    }\n};\nreturn msg;\n",
         "outputs": 1,
@@ -1006,15 +932,15 @@
         "y": 190,
         "wires": [
             [
-                "ui_template_main",
-                "debug_snapshot"
+                "d9daa6c1e2bbfd61",
+                "81a32c18a641b274"
             ]
         ]
     },
     {
-        "id": "ui_template_main",
+        "id": "d9daa6c1e2bbfd61",
         "type": "ui-template",
-        "z": "flow_buses_ff2_plus",
+        "z": "a16bf8cc0b1cfe29",
         "group": "ui_group_buses_plus",
         "page": "",
         "ui": "",
@@ -1023,7 +949,7 @@
         "width": "12",
         "height": "20",
         "head": "",
-        "format": "\n<template>\n  <div class=\"ops-dashboard\" v-if=\"state\">\n    <section class=\"topbar\">\n      <div>\n        <p class=\"eyebrow\">Centro de Control · Transporte Público</p>\n        <h1>{{ state.metadata.title || 'Sistema de Monitoreo de Buses' }}</h1>\n        <p class=\"sub\">Rutas referenciales de Machala, Puerto Bolívar, Santa Rosa, Pasaje y El Guabo · Estado: <b>{{ state.running ? 'EN VIVO' : 'PAUSADO' }}</b></p>\n      </div>\n      <div class=\"top-actions\">\n        <button class=\"btn primary\" @click=\"sendCmd('cmd/toggle')\">{{ state.running ? '⏸ Pausar' : '▶ Reanudar' }}</button>\n        <button class=\"btn ghost\" @click=\"sendCmd('cmd/resetFleet')\">↻ Reiniciar flota</button>\n        <button class=\"btn ghost\" @click=\"exportCsv\">⬇ Exportar CSV</button>\n      </div>\n    </section>\n\n    <section class=\"control-panel\">\n      <label>\n        <span>Ruta monitoreada</span>\n        <select v-model=\"selectedRouteId\" @change=\"changeRoute\">\n          <option v-for=\"r in state.routes\" :key=\"r.id\" :value=\"r.id\">{{ r.id }} · {{ r.name }}</option>\n        </select>\n      </label>\n      <label>\n        <span>Filtro de búsqueda</span>\n        <input v-model=\"search\" placeholder=\"Buscar bus, conductor, parada, placa...\" />\n      </label>\n      <label>\n        <span>Estado</span>\n        <select v-model=\"statusFilter\">\n          <option value=\"all\">Todos</option>\n          <option value=\"ok\">A tiempo</option>\n          <option value=\"warn\">Moderado</option>\n          <option value=\"bad\">Demorado/Lleno</option>\n          <option value=\"off\">Fuera de servicio</option>\n        </select>\n      </label>\n      <label>\n        <span>Velocidad simulación: {{ state.speedFactor }}x</span>\n        <input type=\"range\" min=\"0.25\" max=\"4\" step=\"0.25\" :value=\"state.speedFactor\" @change=\"changeSpeed\" />\n      </label>\n    </section>\n\n    <section class=\"kpi-grid\">\n      <article class=\"kpi\"><span>🚍 Buses ruta</span><strong>{{ state.kpi.activeSelected }}</strong><small>{{ state.kpi.activeTotal }} activos en todo el sistema</small></article>\n      <article class=\"kpi\"><span>⏱ Próximo bus</span><strong>{{ etaText }}</strong><small>{{ state.kpi.nextBus }} · {{ state.kpi.nextStop }}</small></article>\n      <article class=\"kpi\"><span>👥 Ocupación ruta</span><strong>{{ state.kpi.routeAvgOcc }}%</strong><small>Promedio sistema {{ state.kpi.avgOccupancy }}%</small></article>\n      <article class=\"kpi\"><span>🛣 Distancia ruta</span><strong>{{ state.kpi.selectedDistanceKm }} km</strong><small>Duración base {{ state.kpi.selectedDurationMin }} min</small></article>\n      <article class=\"kpi\"><span>⚠ Alertas</span><strong>{{ state.kpi.alerts }}</strong><small>{{ state.kpi.delayed }} unidades críticas</small></article>\n      <article class=\"kpi\"><span>📡 Última actualización</span><strong>{{ state.kpi.lastUpdate }}</strong><small>Confiabilidad {{ state.kpi.reliability }}%</small></article>\n    </section>\n\n    <section class=\"layout-grid\">\n      <article class=\"panel map-panel\">\n        <div class=\"panel-title\">\n          <div><h2>🗺️ Mapa operativo</h2><p>{{ selectedRoute.name }} · {{ selectedRoute.stops.length }} paradas · Frecuencia {{ selectedRoute.headwayMin }} min</p></div>\n          <span class=\"live\" :class=\"state.running ? 'on' : 'off'\">● {{ state.running ? 'EN VIVO' : 'PAUSADO' }}</span>\n        </div>\n        <div ref=\"map\" class=\"map\"></div>\n        <div v-if=\"mapWarning\" class=\"warning\">{{ mapWarning }}</div>\n      </article>\n\n      <aside class=\"panel side-panel\">\n        <h2>📍 Línea de paradas</h2>\n        <div class=\"route-line\">\n          <div v-for=\"(stop, idx) in selectedRoute.stops\" :key=\"stop.code\" class=\"stop-row\">\n            <span class=\"dot\" :style=\"{ borderColor: selectedRoute.color }\">{{ idx + 1 }}</span>\n            <div><b>{{ stop.code }} · {{ stop.name }}</b><small>{{ stop.type }} · {{ stop.lat.toFixed(4) }}, {{ stop.lng.toFixed(4) }}</small></div>\n          </div>\n        </div>\n        <h2>🚨 Alertas recientes</h2>\n        <div class=\"alerts\">\n          <div v-if=\"!state.alerts.length\" class=\"alert ok\">Sin alertas críticas</div>\n          <div v-for=\"(a, idx) in state.alerts\" :key=\"idx\" class=\"alert\" :class=\"a.level\">{{ a.text }}</div>\n        </div>\n      </aside>\n    </section>\n\n    <section class=\"panel summary-panel\">\n      <div class=\"panel-title\">\n        <div><h2>🧭 Resumen por ruta</h2><p>Comparación de cobertura, frecuencia, ETA y alertas por corredor.</p></div>\n      </div>\n      <div class=\"cards-routes\">\n        <button v-for=\"r in state.routeSummary\" :key=\"r.id\" class=\"route-card\" :class=\"{active: r.id === state.selectedRouteId}\" @click=\"selectRoute(r.id)\">\n          <b><span :style=\"{background: r.color}\"></span>{{ r.id }} · {{ r.line }}</b>\n          <small>{{ r.buses }} buses · ETA {{ r.minEta === null ? '—' : r.minEta + ' min' }} · Ocup. {{ r.avgOcc }}%</small>\n          <em>{{ r.distanceKm }} km · {{ r.durationMin }} min · {{ r.bad }} alertas</em>\n        </button>\n      </div>\n    </section>\n\n    <section class=\"panel table-panel\">\n      <div class=\"panel-title\">\n        <div><h2>📊 Tabla de tiempos y telemetría</h2><p>Filtra unidades por bus, placa, conductor, parada o estado.</p></div>\n        <span class=\"count\">{{ filteredRows.length }} registros</span>\n      </div>\n      <div class=\"table-wrap\">\n        <table>\n          <thead>\n            <tr>\n              <th>Bus</th><th>Placa</th><th>Conductor</th><th>Siguiente parada</th><th>ETA origen</th><th>ETA destino</th><th>Ocupación</th><th>Velocidad</th><th>Progreso</th><th>Estado</th><th>Acción</th>\n            </tr>\n          </thead>\n          <tbody>\n            <tr v-for=\"row in filteredRows\" :key=\"row.bus\">\n              <td><b>{{ row.bus }}</b></td>\n              <td>{{ row.plate }}</td>\n              <td>{{ row.driver }}</td>\n              <td>{{ row.nextStop }}</td>\n              <td>{{ row.etaOrigin }} min</td>\n              <td>{{ row.etaDest }} min</td>\n              <td><div class=\"bar\"><i :style=\"{width: row.occupancy + '%'}\"></i></div><small>{{ row.occupancy }}%</small></td>\n              <td>{{ row.speedKmh }} km/h</td>\n              <td>{{ row.progressPct }}%</td>\n              <td><span class=\"state\" :class=\"row.statusClass\">{{ row.status }}</span></td>\n              <td><button class=\"mini\" @click=\"toggleBus(row.bus)\">{{ row.active ? 'Desactivar' : 'Activar' }}</button></td>\n            </tr>\n          </tbody>\n        </table>\n      </div>\n    </section>\n  </div>\n\n  <div class=\"loading\" v-else>\n    <h2>Cargando dashboard de buses...</h2>\n    <p>Espera unos segundos después de hacer Deploy.</p>\n  </div>\n</template>\n\n<script>\nexport default {\n  data () {\n    return {\n      state: null,\n      selectedRouteId: 'R01',\n      search: '',\n      statusFilter: 'all',\n      map: null,\n      routeLayer: null,\n      stopLayer: null,\n      busLayer: null,\n      mapWarning: ''\n    }\n  },\n  computed: {\n    selectedRoute () {\n      if (!this.state) return { stops: [], name: '', color: '#38bdf8' }\n      return this.state.routes.find(r => r.id === this.state.selectedRouteId) || this.state.routes[0]\n    },\n    filteredRows () {\n      if (!this.state) return []\n      const q = this.search.toLowerCase().trim()\n      return this.state.table.filter(row => {\n        const statusOk = this.statusFilter === 'all' || row.statusClass === this.statusFilter\n        const qOk = !q || JSON.stringify(row).toLowerCase().includes(q)\n        return statusOk && qOk\n      })\n    },\n    etaText () {\n      if (!this.state || this.state.kpi.nextEta === null || this.state.kpi.nextEta === undefined) return '—'\n      return `${this.state.kpi.nextEta} min`\n    }\n  },\n  watch: {\n    msg: {\n      handler (msg) {\n        if (!msg || !msg.payload || msg.payload.type !== 'snapshot') return\n        this.state = msg.payload\n        this.selectedRouteId = this.state.selectedRouteId\n        this.$nextTick(() => this.drawMap())\n      },\n      deep: true,\n      immediate: true\n    }\n  },\n  methods: {\n    sendCmd (topic, payload = {}) {\n      this.send({ topic, payload })\n    },\n    changeRoute () {\n      this.sendCmd('cmd/selectRoute', { routeId: this.selectedRouteId })\n    },\n    selectRoute (routeId) {\n      this.selectedRouteId = routeId\n      this.changeRoute()\n    },\n    changeSpeed (event) {\n      this.sendCmd('cmd/speed', { speedFactor: Number(event.target.value) })\n    },\n    toggleBus (busId) {\n      this.sendCmd('cmd/toggleBus', { busId })\n    },\n    exportCsv () {\n      if (!this.state) return\n      const rows = this.filteredRows\n      const headers = ['Bus','Placa','Conductor','Ruta','Siguiente parada','ETA origen','ETA destino','Ocupacion','Velocidad','Progreso','Estado','Lat','Lng']\n      const csvRows = [headers.join(',')].concat(rows.map(r => [r.bus,r.plate,r.driver,r.route,r.nextStop,r.etaOrigin,r.etaDest,r.occupancy,r.speedKmh,r.progressPct,r.status,r.lat,r.lng].map(v => `\"${String(v ?? '').replace(/\"/g,'\"\"')}\"`).join(',')))\n      const blob = new Blob([csvRows.join('\\n')], { type: 'text/csv;charset=utf-8;' })\n      const url = URL.createObjectURL(blob)\n      const a = document.createElement('a')\n      a.href = url\n      a.download = `telemetria_${this.state.selectedRouteId}.csv`\n      document.body.appendChild(a)\n      a.click()\n      document.body.removeChild(a)\n      URL.revokeObjectURL(url)\n    },\n    loadLeaflet () {\n      return new Promise((resolve, reject) => {\n        if (window.L) return resolve()\n        const cssId = 'leaflet-css-dashboard-buses'\n        if (!document.getElementById(cssId)) {\n          const link = document.createElement('link')\n          link.id = cssId\n          link.rel = 'stylesheet'\n          link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'\n          document.head.appendChild(link)\n        }\n        const script = document.createElement('script')\n        script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'\n        script.onload = resolve\n        script.onerror = reject\n        document.head.appendChild(script)\n      })\n    },\n    initMap () {\n      if (this.map || !this.$refs.map || !window.L) return\n      this.map = L.map(this.$refs.map, { zoomControl: true })\n      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {\n        maxZoom: 19,\n        attribution: '&copy; OpenStreetMap contributors'\n      }).addTo(this.map)\n      this.drawMap()\n    },\n    busIcon (bus) {\n      const color = bus.statusClass === 'bad' ? '#ef4444' : bus.statusClass === 'warn' ? '#f59e0b' : '#22c55e'\n      return L.divIcon({\n        className: '',\n        html: `<div class=\"bus-marker\" style=\"border-color:${color}\">🚌<span>${bus.id.replace('BUS-', '')}</span></div>`,\n        iconSize: [54, 36],\n        iconAnchor: [27, 18]\n      })\n    },\n    stopIcon (idx, stop) {\n      const cls = idx === 0 ? 'origin' : idx === this.selectedRoute.stops.length - 1 ? 'dest' : ''\n      return L.divIcon({ className: '', html: `<div class=\"stop-marker ${cls}\">${idx + 1}</div>`, iconSize: [30, 30], iconAnchor: [15, 15] })\n    },\n    drawMap () {\n      if (!this.state || !this.selectedRoute) return\n      if (!window.L) return\n      if (!this.map) { this.initMap(); return }\n\n      if (this.routeLayer) this.map.removeLayer(this.routeLayer)\n      if (this.stopLayer) this.map.removeLayer(this.stopLayer)\n      if (this.busLayer) this.map.removeLayer(this.busLayer)\n\n      const route = this.selectedRoute\n      const points = route.stops.map(s => [s.lat, s.lng])\n      this.routeLayer = L.polyline(points, { color: route.color, weight: 6, opacity: 0.86 }).addTo(this.map)\n\n      this.stopLayer = L.layerGroup(route.stops.map((s, idx) => {\n        return L.marker([s.lat, s.lng], { icon: this.stopIcon(idx, s) })\n          .bindPopup(`<b>${s.code} · ${s.name}</b><br>${s.type}<br>${s.lat.toFixed(5)}, ${s.lng.toFixed(5)}`)\n      })).addTo(this.map)\n\n      const buses = this.state.selectedBuses || []\n      this.busLayer = L.layerGroup(buses.map(bus => {\n        return L.marker([bus.lat, bus.lng], { icon: this.busIcon(bus) })\n          .bindPopup(`<b>${bus.id}</b><br>${bus.routeName}<br>ETA destino: ${bus.etaDest} min<br>Ocupación: ${bus.occupancy}%<br>Estado: ${bus.status}`)\n      })).addTo(this.map)\n\n      const bounds = L.latLngBounds(points.concat(buses.filter(b => b.lat && b.lng).map(b => [b.lat, b.lng])))\n      if (bounds.isValid()) this.map.fitBounds(bounds, { padding: [24, 24], maxZoom: 14 })\n      setTimeout(() => this.map.invalidateSize(), 100)\n    }\n  },\n  mounted () {\n    this.loadLeaflet()\n      .then(() => this.$nextTick(() => this.initMap()))\n      .catch(() => { this.mapWarning = 'No se pudo cargar Leaflet. Revisa internet o permite acceso a unpkg.com y OpenStreetMap.' })\n  },\n  unmounted () {\n    if (this.map) this.map.remove()\n  }\n}\n</script>\n\n<style>\n.ops-dashboard { font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #e5f2ff; }\n.ops-dashboard * { box-sizing: border-box; }\n.topbar, .control-panel, .panel, .kpi { background: linear-gradient(135deg, rgba(15,23,42,.96), rgba(8,47,73,.88)); border: 1px solid rgba(56,189,248,.22); border-radius: 20px; box-shadow: 0 18px 50px rgba(2,6,23,.28); }\n.topbar { display:flex; justify-content:space-between; gap:16px; align-items:center; padding:22px; margin-bottom:14px; background: radial-gradient(circle at top left, rgba(34,211,238,.28), transparent 34%), linear-gradient(135deg,#020617,#0f172a 58%,#082f49); }\n.eyebrow { margin:0 0 6px; color:#7dd3fc; font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:.08em; }\nh1 { margin:0; font-size:clamp(24px,3.5vw,42px); line-height:1.05; }\n.sub { color:#b6c8db; margin:8px 0 0; }\n.top-actions { display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; }\n.btn, .mini { border:0; cursor:pointer; font-weight:900; border-radius:14px; padding:12px 14px; transition: transform .18s ease, opacity .18s ease; }\n.btn:hover, .mini:hover { transform:translateY(-1px); opacity:.93; }\n.primary { background:linear-gradient(135deg,#38bdf8,#2563eb); color:white; }\n.ghost, .mini { background:rgba(148,163,184,.14); color:#dbeafe; border:1px solid rgba(148,163,184,.22); }\n.control-panel { display:grid; grid-template-columns:1.35fr 1fr .75fr .9fr; gap:12px; align-items:end; padding:16px; margin-bottom:14px; }\nlabel { display:flex; flex-direction:column; gap:6px; color:#9fb6d3; font-size:13px; font-weight:800; }\nselect, input { width:100%; border:1px solid rgba(125,211,252,.22); border-radius:12px; color:#e5f2ff; background:rgba(8,18,35,.86); padding:11px 12px; outline:none; }\ninput[type='range'] { padding:0; accent-color:#38bdf8; }\n.kpi-grid { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:14px; margin-bottom:14px; }\n.kpi { padding:16px; min-height:118px; }\n.kpi span { display:block; color:#9fb6d3; font-size:13px; font-weight:900; }\n.kpi strong { display:block; font-size:30px; margin-top:8px; line-height:1; }\n.kpi small { display:block; color:#93a8c2; margin-top:9px; line-height:1.25; }\n.layout-grid { display:grid; grid-template-columns:minmax(0,2.1fr) minmax(330px,.9fr); gap:14px; margin-bottom:14px; }\n.panel { padding:15px; overflow:hidden; }\n.panel-title { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:12px; }\nh2 { margin:0; font-size:18px; }\n.panel-title p { margin:4px 0 0; color:#94a3b8; font-size:13px; }\n.live, .count, .state { border-radius:999px; padding:6px 10px; font-size:12px; font-weight:900; white-space:nowrap; }\n.live.on, .state.ok, .alert.ok { color:#86efac; background:rgba(34,197,94,.16); }\n.live.off, .state.off { color:#cbd5e1; background:rgba(148,163,184,.14); }\n.state.warn, .alert.warn { color:#fcd34d; background:rgba(245,158,11,.16); }\n.state.bad, .alert.bad { color:#fca5a5; background:rgba(239,68,68,.18); }\n.count { color:#7dd3fc; background:rgba(56,189,248,.16); }\n.map { height:520px; width:100%; border-radius:16px; overflow:hidden; background:#dbeafe; border:1px solid rgba(148,163,184,.18); }\n.warning { margin-top:10px; padding:10px; color:#fecaca; background:rgba(239,68,68,.18); border-radius:12px; }\n.side-panel { max-height:620px; overflow:auto; }\n.route-line { display:grid; gap:10px; margin:12px 0 20px; }\n.stop-row { display:grid; grid-template-columns:36px 1fr; gap:10px; align-items:flex-start; }\n.dot { width:30px; height:30px; display:grid; place-items:center; border:3px solid #38bdf8; border-radius:50%; background:#0f172a; color:white; font-size:12px; font-weight:900; }\n.stop-row b { display:block; font-size:13px; }\n.stop-row small { display:block; color:#94a3b8; margin-top:2px; }\n.alerts { display:grid; gap:8px; margin-top:10px; }\n.alert { padding:10px; border-radius:12px; color:#dbeafe; background:rgba(148,163,184,.12); font-size:13px; }\n.cards-routes { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }\n.route-card { text-align:left; border:1px solid rgba(148,163,184,.16); border-radius:14px; background:rgba(15,23,42,.72); color:#dbeafe; padding:12px; cursor:pointer; }\n.route-card.active { outline:2px solid rgba(56,189,248,.6); background:rgba(14,165,233,.16); }\n.route-card b { display:flex; align-items:center; gap:8px; }\n.route-card b span { width:12px; height:12px; border-radius:50%; display:inline-block; }\n.route-card small, .route-card em { display:block; color:#9fb6d3; margin-top:5px; font-style:normal; font-size:12px; }\n.table-wrap { overflow:auto; border:1px solid rgba(148,163,184,.15); border-radius:14px; }\ntable { width:100%; border-collapse:collapse; min-width:1180px; background:rgba(15,23,42,.65); }\nth,td { padding:12px 13px; border-bottom:1px solid rgba(148,163,184,.13); text-align:left; font-size:13px; }\nth { color:#7dd3fc; background:rgba(8,18,35,.85); text-transform:uppercase; font-size:11px; letter-spacing:.04em; }\n.bar { width:92px; height:8px; border-radius:99px; background:rgba(148,163,184,.18); overflow:hidden; display:inline-block; margin-right:6px; vertical-align:middle; }\n.bar i { display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg,#22c55e,#f59e0b,#ef4444); }\n.bus-marker { min-width:52px; height:34px; display:flex; align-items:center; justify-content:center; gap:3px; background:white; color:#0f172a; border:3px solid #22c55e; border-radius:13px; font-weight:900; box-shadow:0 10px 24px rgba(2,6,23,.35); }\n.bus-marker span { font-size:10px; }\n.stop-marker { width:30px; height:30px; display:grid; place-items:center; border-radius:50%; background:#0f172a; color:white; border:3px solid #38bdf8; font-size:12px; font-weight:900; box-shadow:0 8px 16px rgba(2,6,23,.32); }\n.stop-marker.origin { border-color:#22c55e; }\n.stop-marker.dest { border-color:#ef4444; }\n.leaflet-popup-content { color:#0f172a; }\n.loading { display:grid; place-items:center; min-height:360px; color:#e5f2ff; text-align:center; }\n@media (max-width:1200px) { .kpi-grid { grid-template-columns:repeat(3,1fr); } .control-panel, .layout-grid { grid-template-columns:1fr 1fr; } .map-panel { grid-column:1/-1; } .cards-routes { grid-template-columns:repeat(2,1fr); } }\n@media (max-width:760px) { .topbar, .panel-title { flex-direction:column; align-items:flex-start; } .control-panel, .layout-grid, .kpi-grid, .cards-routes { grid-template-columns:1fr; } .map { height:380px; } }\n</style>\n",
+        "format": "\n<template>\n  <div class=\"ops-dashboard\" v-if=\"state\">\n    <section class=\"topbar\">\n      <div>\n        <p class=\"eyebrow\">Centro de Control · Transporte Público</p>\n        <h1>{{ state.metadata.title || 'Sistema de Monitoreo de Buses' }}</h1>\n        <p class=\"sub\">Rutas referenciales de Machala, Puerto Bolívar, Santa Rosa, Pasaje y El Guabo · Estado: <b>{{ state.running ? 'EN VIVO' : 'PAUSADO' }}</b></p>\n      </div>\n      <div class=\"top-actions\">\n        <button class=\"btn primary\" @click=\"sendCmd('cmd/toggle')\">{{ state.running ? '⏸ Pausar' : '▶ Reanudar' }}</button>\n        <button class=\"btn ghost\" @click=\"sendCmd('cmd/resetFleet')\">↻ Reiniciar flota</button>\n        <button class=\"btn ghost\" @click=\"exportCsv\">⬇ Exportar CSV</button>\n      </div>\n    </section>\n\n    <section class=\"control-panel\">\n      <label>\n        <span>Ruta monitoreada</span>\n        <select v-model=\"selectedRouteId\" @change=\"changeRoute\">\n          <option v-for=\"r in state.routes\" :key=\"r.id\" :value=\"r.id\">{{ r.id }} · {{ r.name }}</option>\n        </select>\n      </label>\n      <label>\n        <span>Filtro de búsqueda</span>\n        <input v-model=\"search\" placeholder=\"Buscar bus, conductor, parada, placa...\" />\n      </label>\n      <label>\n        <span>Estado</span>\n        <select v-model=\"statusFilter\">\n          <option value=\"all\">Todos</option>\n          <option value=\"ok\">A tiempo</option>\n          <option value=\"warn\">Moderado</option>\n          <option value=\"bad\">Demorado/Lleno</option>\n          <option value=\"off\">Fuera de servicio</option>\n        </select>\n      </label>\n      <label>\n        <span>Velocidad simulación: {{ state.speedFactor }}x</span>\n        <input type=\"range\" min=\"0.25\" max=\"4\" step=\"0.25\" :value=\"state.speedFactor\" @change=\"changeSpeed\" />\n      </label>\n    </section>\n\n    <section class=\"kpi-grid\">\n      <article class=\"kpi\"><span>🚍 Buses ruta</span><strong>{{ state.kpi.activeSelected }}</strong><small>{{ state.kpi.activeTotal }} activos en todo el sistema</small></article>\n      <article class=\"kpi\"><span>⏱ Próximo bus</span><strong>{{ etaText }}</strong><small>{{ state.kpi.nextBus }} · {{ state.kpi.nextStop }}</small></article>\n      <article class=\"kpi\"><span>👥 Ocupación ruta</span><strong>{{ state.kpi.routeAvgOcc }}%</strong><small>Promedio sistema {{ state.kpi.avgOccupancy }}%</small></article>\n      <article class=\"kpi\"><span>🛣 Distancia ruta</span><strong>{{ state.kpi.selectedDistanceKm }} km</strong><small>Duración base {{ state.kpi.selectedDurationMin }} min</small></article>\n      <article class=\"kpi\"><span>⚠ Alertas</span><strong>{{ state.kpi.alerts }}</strong><small>{{ state.kpi.delayed }} unidades críticas</small></article>\n      <article class=\"kpi\"><span>📡 Última actualización</span><strong>{{ state.kpi.lastUpdate }}</strong><small>Confiabilidad {{ state.kpi.reliability }}%</small></article>\n    </section>\n\n    <section class=\"layout-grid\">\n      <article class=\"panel map-panel\">\n        <div class=\"panel-title\">\n          <div><h2>🗺️ Mapa operativo</h2><p>{{ selectedRoute.name }} · {{ selectedRoute.stops.length }} paradas · Frecuencia {{ selectedRoute.headwayMin }} min</p></div>\n          <span class=\"live\" :class=\"state.running ? 'on' : 'off'\">● {{ state.running ? 'EN VIVO' : 'PAUSADO' }}</span>\n        </div>\n        <div ref=\"mapEl\" id=\"ops-leaflet-map\" class=\"map\"></div>\n        <div v-if=\"mapWarning\" class=\"warning-box\">⚠ {{ mapWarning }}</div>\n        <div v-if=\"mapStatus\" class=\"map-status-msg\">{{ mapStatus }}</div>\n      </article>\n\n      <aside class=\"panel side-panel\">\n        <h2>📍 Línea de paradas</h2>\n        <div class=\"route-line\">\n          <div v-for=\"(stop, idx) in selectedRoute.stops\" :key=\"stop.code\" class=\"stop-row\">\n            <span class=\"dot\" :style=\"{ borderColor: selectedRoute.color }\">{{ idx + 1 }}</span>\n            <div><b>{{ stop.code }} · {{ stop.name }}</b><small>{{ stop.type }} · {{ stop.lat.toFixed(4) }}, {{ stop.lng.toFixed(4) }}</small></div>\n          </div>\n        </div>\n        <h2>🚨 Alertas recientes</h2>\n        <div class=\"alerts\">\n          <div v-if=\"!state.alerts.length\" class=\"alert ok\">Sin alertas críticas</div>\n          <div v-for=\"(a, idx) in state.alerts\" :key=\"idx\" class=\"alert\" :class=\"a.level\">{{ a.text }}</div>\n        </div>\n      </aside>\n    </section>\n\n    <section class=\"panel summary-panel\">\n      <div class=\"panel-title\">\n        <div><h2>🧭 Resumen por ruta</h2><p>Comparación de cobertura, frecuencia, ETA y alertas por corredor.</p></div>\n      </div>\n      <div class=\"cards-routes\">\n        <button v-for=\"r in state.routeSummary\" :key=\"r.id\" class=\"route-card\" :class=\"{active: r.id === state.selectedRouteId}\" @click=\"selectRoute(r.id)\">\n          <b><span :style=\"{background: r.color}\"></span>{{ r.id }} · {{ r.line }}</b>\n          <small>{{ r.buses }} buses · ETA {{ r.minEta === null ? '—' : r.minEta + ' min' }} · Ocup. {{ r.avgOcc }}%</small>\n          <em>{{ r.distanceKm }} km · {{ r.durationMin }} min · {{ r.bad }} alertas</em>\n        </button>\n      </div>\n    </section>\n\n    <section class=\"panel table-panel\">\n      <div class=\"panel-title\">\n        <div><h2>📊 Tabla de tiempos y telemetría</h2><p>Filtra unidades por bus, placa, conductor, parada o estado.</p></div>\n        <span class=\"count\">{{ filteredRows.length }} registros</span>\n      </div>\n      <div class=\"table-wrap\">\n        <table>\n          <thead>\n            <tr>\n              <th>Bus</th><th>Placa</th><th>Conductor</th><th>Siguiente parada</th><th>ETA origen</th><th>ETA destino</th><th>Ocupación</th><th>Velocidad</th><th>Progreso</th><th>Estado</th><th>Acción</th>\n            </tr>\n          </thead>\n          <tbody>\n            <tr v-for=\"row in filteredRows\" :key=\"row.bus\">\n              <td><b>{{ row.bus }}</b></td>\n              <td>{{ row.plate }}</td>\n              <td>{{ row.driver }}</td>\n              <td>{{ row.nextStop }}</td>\n              <td>{{ row.etaOrigin }} min</td>\n              <td>{{ row.etaDest }} min</td>\n              <td><div class=\"bar\"><i :style=\"{width: row.occupancy + '%'}\"></i></div><small>{{ row.occupancy }}%</small></td>\n              <td>{{ row.speedKmh }} km/h</td>\n              <td>{{ row.progressPct }}%</td>\n              <td><span class=\"state\" :class=\"row.statusClass\">{{ row.status }}</span></td>\n              <td><button class=\"mini\" @click=\"toggleBus(row.bus)\">{{ row.active ? 'Desactivar' : 'Activar' }}</button></td>\n            </tr>\n          </tbody>\n        </table>\n      </div>\n    </section>\n  </div>\n\n  <div class=\"loading\" v-else>\n    <h2>Cargando dashboard de buses...</h2>\n    <p>Espera unos segundos después de hacer Deploy.</p>\n  </div>\n</template>\n\n<script>\nexport default {\n  data () {\n    return {\n      state: null,\n      selectedRouteId: 'R01',\n      search: '',\n      statusFilter: 'all',\n      map: null,\n      _L: null,\n      routeLayer: null,\n      stopLayer: null,\n      busLayer: null,\n      mapWarning: '',\n      mapStatus: 'Iniciando mapa...'\n    }\n  },\n  computed: {\n    selectedRoute () {\n      if (!this.state) return { stops: [], name: '', color: '#38bdf8' }\n      return this.state.routes.find(r => r.id === this.state.selectedRouteId) || this.state.routes[0]\n    },\n    filteredRows () {\n      if (!this.state) return []\n      const q = this.search.toLowerCase().trim()\n      return this.state.table.filter(row => {\n        const statusOk = this.statusFilter === 'all' || row.statusClass === this.statusFilter\n        const qOk = !q || JSON.stringify(row).toLowerCase().includes(q)\n        return statusOk && qOk\n      })\n    },\n    etaText () {\n      if (!this.state || this.state.kpi.nextEta === null || this.state.kpi.nextEta === undefined) return '—'\n      return `${this.state.kpi.nextEta} min`\n    }\n  },\n  watch: {\n    msg: {\n      handler (msg) {\n        if (!msg || !msg.payload || msg.payload.type !== 'snapshot') return\n        this.state = msg.payload\n        this.selectedRouteId = this.state.selectedRouteId\n        this.$nextTick(() => { if (this.map) { this.drawMap() } else { setTimeout(() => this.initMap(), 120) } })\n      },\n      deep: true,\n      immediate: true\n    }\n  },\n  methods: {\n    sendCmd (topic, payload = {}) {\n      this.send({ topic, payload })\n    },\n    changeRoute () {\n      this.sendCmd('cmd/selectRoute', { routeId: this.selectedRouteId })\n    },\n    selectRoute (routeId) {\n      this.selectedRouteId = routeId\n      this.changeRoute()\n    },\n    changeSpeed (event) {\n      this.sendCmd('cmd/speed', { speedFactor: Number(event.target.value) })\n    },\n    toggleBus (busId) {\n      this.sendCmd('cmd/toggleBus', { busId })\n    },\n    exportCsv () {\n      if (!this.state) return\n      const rows = this.filteredRows\n      const headers = ['Bus','Placa','Conductor','Ruta','Siguiente parada','ETA origen','ETA destino','Ocupacion','Velocidad','Progreso','Estado','Lat','Lng']\n      const csvRows = [headers.join(',')].concat(rows.map(r => [r.bus,r.plate,r.driver,r.route,r.nextStop,r.etaOrigin,r.etaDest,r.occupancy,r.speedKmh,r.progressPct,r.status,r.lat,r.lng].map(v => `\"${String(v ?? '').replace(/\"/g,'\"\"')}\"`).join(',')))\n      const blob = new Blob([csvRows.join('\\n')], { type: 'text/csv;charset=utf-8;' })\n      const url = URL.createObjectURL(blob)\n      const a = document.createElement('a')\n      a.href = url\n      a.download = `telemetria_${this.state.selectedRouteId}.csv`\n      document.body.appendChild(a)\n      a.click()\n      document.body.removeChild(a)\n      URL.revokeObjectURL(url)\n    },\n    loadLeaflet () {\n      return new Promise((resolve, reject) => {\n        if (this._L) return resolve(this._L)\n        const CDNS = [\n          {\n            css: 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',\n            js:  'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'\n          },\n          {\n            css: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css',\n            js:  'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js'\n          }\n        ]\n        const cssId = 'leaflet-css-nrdash'\n        const tryLoad = (idx) => {\n          if (idx >= CDNS.length) { reject(new Error('All Leaflet CDNs failed')); return }\n          const cdn = CDNS[idx]\n          if (!document.getElementById(cssId)) {\n            const link = document.createElement('link')\n            link.id = cssId; link.rel = 'stylesheet'; link.href = cdn.css\n            document.head.appendChild(link)\n          }\n          // Remove any previous failed script\n          const prev = document.getElementById('leaflet-js-nrdash')\n          if (prev) prev.remove()\n          const script = document.createElement('script')\n          script.id = 'leaflet-js-nrdash'\n          script.src = cdn.js\n          script.onload = () => {\n            // Leaflet injects itself as window.L – capture it immediately\n            // then delete window.L so it doesn't collide with the host app\n            const LLib = window.L\n            if (LLib && typeof LLib.map === 'function') {\n              this._L = LLib\n              try { delete window.L } catch(e) { window.L = undefined }\n              resolve(this._L)\n            } else {\n              tryLoad(idx + 1)\n            }\n          }\n          script.onerror = () => tryLoad(idx + 1)\n          document.head.appendChild(script)\n        }\n        tryLoad(0)\n      })\n    },\n    initMap () {\n      if (this.map || !this._L) return\n      const el = this.$refs.mapEl || document.getElementById('ops-leaflet-map')\n      if (!el || el.clientHeight < 10) {\n        setTimeout(() => this.initMap(), 250); return\n      }\n      const LL = this._L\n      this.mapStatus = ''\n      this.map = LL.map(el, { zoomControl: true })\n      const osm = LL.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {\n        maxZoom: 19, attribution: '&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a>'\n      })\n      osm.on('tileerror', () => {\n        this.map.eachLayer(l => { if (l._url && l._url.includes('openstreetmap')) this.map.removeLayer(l) })\n        LL.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {\n          maxZoom: 19, attribution: '&copy; OpenStreetMap &copy; CARTO'\n        }).addTo(this.map)\n      })\n      osm.addTo(this.map)\n      setTimeout(() => { this.map.invalidateSize(); this.drawMap() }, 200)\n    },\n    busIcon (bus) {\n      const LL = this._L\n      const color = bus.statusClass === 'bad' ? '#ef4444' : bus.statusClass === 'warn' ? '#f59e0b' : '#22c55e'\n      return LL.divIcon({\n        className: '',\n        html: `<div class=\"bus-marker\" style=\"border-color:${color}\">🚌<span>${bus.id.replace('BUS-', '')}</span></div>`,\n        iconSize: [54, 36],\n        iconAnchor: [27, 18]\n      })\n    },\n    stopIcon (idx, stop) {\n      const LL = this._L\n      const cls = idx === 0 ? 'origin' : idx === this.selectedRoute.stops.length - 1 ? 'dest' : ''\n      return LL.divIcon({ className: '', html: `<div class=\"stop-marker ${cls}\">${idx + 1}</div>`, iconSize: [30, 30], iconAnchor: [15, 15] })\n    },\n    drawMap () {\n      if (!this.state || !this.selectedRoute || !this._L) return\n      if (!this.map) { this.initMap(); return }\n      const LL = this._L\n      this.map.invalidateSize()\n\n      if (this.routeLayer) this.map.removeLayer(this.routeLayer)\n      if (this.stopLayer)  this.map.removeLayer(this.stopLayer)\n      if (this.busLayer)   this.map.removeLayer(this.busLayer)\n\n      const route = this.selectedRoute\n      const points = route.stops.map(s => [s.lat, s.lng])\n      this.routeLayer = LL.polyline(points, { color: route.color, weight: 6, opacity: 0.86 }).addTo(this.map)\n\n      this.stopLayer = LL.layerGroup(route.stops.map((s, idx) => {\n        return LL.marker([s.lat, s.lng], { icon: this.stopIcon(idx, s) })\n          .bindPopup(`<b>${s.code} · ${s.name}</b><br>${s.type}<br>${s.lat.toFixed(5)}, ${s.lng.toFixed(5)}`)\n      })).addTo(this.map)\n\n      const buses = (this.state.selectedBuses || []).filter(b => b.lat && b.lng)\n      this.busLayer = LL.layerGroup(buses.map(bus => {\n        return LL.marker([bus.lat, bus.lng], { icon: this.busIcon(bus) })\n          .bindPopup(`<b>${bus.id}</b><br>${bus.routeName}<br>ETA destino: ${bus.etaDest} min<br>Ocupación: ${bus.occupancy}%<br>Estado: ${bus.status}`)\n      })).addTo(this.map)\n\n      const allPts = points.concat(buses.map(b => [b.lat, b.lng]))\n      const bounds = LL.latLngBounds(allPts)\n      if (bounds.isValid()) this.map.fitBounds(bounds, { padding: [32, 32], maxZoom: 14 })\n      setTimeout(() => this.map.invalidateSize(), 350)\n    }\n  },\n  mounted () {\n    this.mapStatus = 'Cargando librería de mapa...'\n    this.loadLeaflet()\n      .then(() => {\n        this.mapStatus = 'Inicializando mapa...'\n        this.$nextTick(() => setTimeout(() => this.initMap(), 150))\n      })\n      .catch((err) => {\n        this.mapStatus = ''\n        this.mapWarning = 'No se pudo cargar Leaflet. Verifica conexión a internet.'\n        console.error('[BusDashboard] Leaflet error:', err)\n      })\n  },\n  unmounted () {\n    if (this.map) { this.map.remove(); this.map = null }\n    this._L = null\n  }\n}\n</script>\n\n<style>\n.ops-dashboard { font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #e5f2ff; }\n.ops-dashboard * { box-sizing: border-box; }\n.topbar, .control-panel, .panel, .kpi { background: linear-gradient(135deg, rgba(15,23,42,.96), rgba(8,47,73,.88)); border: 1px solid rgba(56,189,248,.22); border-radius: 20px; box-shadow: 0 18px 50px rgba(2,6,23,.28); }\n.topbar { display:flex; justify-content:space-between; gap:16px; align-items:center; padding:22px; margin-bottom:14px; background: radial-gradient(circle at top left, rgba(34,211,238,.28), transparent 34%), linear-gradient(135deg,#020617,#0f172a 58%,#082f49); }\n.eyebrow { margin:0 0 6px; color:#7dd3fc; font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:.08em; }\nh1 { margin:0; font-size:clamp(24px,3.5vw,42px); line-height:1.05; }\n.sub { color:#b6c8db; margin:8px 0 0; }\n.top-actions { display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; }\n.btn, .mini { border:0; cursor:pointer; font-weight:900; border-radius:14px; padding:12px 14px; transition: transform .18s ease, opacity .18s ease; }\n.btn:hover, .mini:hover { transform:translateY(-1px); opacity:.93; }\n.primary { background:linear-gradient(135deg,#38bdf8,#2563eb); color:white; }\n.ghost, .mini { background:rgba(148,163,184,.14); color:#dbeafe; border:1px solid rgba(148,163,184,.22); }\n.control-panel { display:grid; grid-template-columns:1.35fr 1fr .75fr .9fr; gap:12px; align-items:end; padding:16px; margin-bottom:14px; }\nlabel { display:flex; flex-direction:column; gap:6px; color:#9fb6d3; font-size:13px; font-weight:800; }\nselect, input { width:100%; border:1px solid rgba(125,211,252,.22); border-radius:12px; color:#e5f2ff; background:rgba(8,18,35,.86); padding:11px 12px; outline:none; }\ninput[type='range'] { padding:0; accent-color:#38bdf8; }\n.kpi-grid { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:14px; margin-bottom:14px; }\n.kpi { padding:16px; min-height:118px; }\n.kpi span { display:block; color:#9fb6d3; font-size:13px; font-weight:900; }\n.kpi strong { display:block; font-size:30px; margin-top:8px; line-height:1; }\n.kpi small { display:block; color:#93a8c2; margin-top:9px; line-height:1.25; }\n.layout-grid { display:grid; grid-template-columns:minmax(0,2.1fr) minmax(330px,.9fr); gap:14px; margin-bottom:14px; }\n.panel { padding:15px; overflow:hidden; }\n.panel-title { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:12px; }\nh2 { margin:0; font-size:18px; }\n.panel-title p { margin:4px 0 0; color:#94a3b8; font-size:13px; }\n.live, .count, .state { border-radius:999px; padding:6px 10px; font-size:12px; font-weight:900; white-space:nowrap; }\n.live.on, .state.ok, .alert.ok { color:#86efac; background:rgba(34,197,94,.16); }\n.live.off, .state.off { color:#cbd5e1; background:rgba(148,163,184,.14); }\n.state.warn, .alert.warn { color:#fcd34d; background:rgba(245,158,11,.16); }\n.state.bad, .alert.bad { color:#fca5a5; background:rgba(239,68,68,.18); }\n.count { color:#7dd3fc; background:rgba(56,189,248,.16); }\n.map { height:520px !important; min-height:520px; width:100% !important; border-radius:16px; overflow:hidden; background:#1e293b; border:1px solid rgba(148,163,184,.18); display:block; position:relative; }\n.map-status-msg { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); color:#7dd3fc; font-size:14px; font-weight:700; pointer-events:none; z-index:1; }\n.warning-box { margin-top:10px; padding:10px 14px; color:#fecaca; background:rgba(239,68,68,.18); border-radius:12px; font-size:13px; }\n\n.side-panel { max-height:620px; overflow:auto; }\n.route-line { display:grid; gap:10px; margin:12px 0 20px; }\n.stop-row { display:grid; grid-template-columns:36px 1fr; gap:10px; align-items:flex-start; }\n.dot { width:30px; height:30px; display:grid; place-items:center; border:3px solid #38bdf8; border-radius:50%; background:#0f172a; color:white; font-size:12px; font-weight:900; }\n.stop-row b { display:block; font-size:13px; }\n.stop-row small { display:block; color:#94a3b8; margin-top:2px; }\n.alerts { display:grid; gap:8px; margin-top:10px; }\n.alert { padding:10px; border-radius:12px; color:#dbeafe; background:rgba(148,163,184,.12); font-size:13px; }\n.cards-routes { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }\n.route-card { text-align:left; border:1px solid rgba(148,163,184,.16); border-radius:14px; background:rgba(15,23,42,.72); color:#dbeafe; padding:12px; cursor:pointer; }\n.route-card.active { outline:2px solid rgba(56,189,248,.6); background:rgba(14,165,233,.16); }\n.route-card b { display:flex; align-items:center; gap:8px; }\n.route-card b span { width:12px; height:12px; border-radius:50%; display:inline-block; }\n.route-card small, .route-card em { display:block; color:#9fb6d3; margin-top:5px; font-style:normal; font-size:12px; }\n.table-wrap { overflow:auto; border:1px solid rgba(148,163,184,.15); border-radius:14px; }\ntable { width:100%; border-collapse:collapse; min-width:1180px; background:rgba(15,23,42,.65); }\nth,td { padding:12px 13px; border-bottom:1px solid rgba(148,163,184,.13); text-align:left; font-size:13px; }\nth { color:#7dd3fc; background:rgba(8,18,35,.85); text-transform:uppercase; font-size:11px; letter-spacing:.04em; }\n.bar { width:92px; height:8px; border-radius:99px; background:rgba(148,163,184,.18); overflow:hidden; display:inline-block; margin-right:6px; vertical-align:middle; }\n.bar i { display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg,#22c55e,#f59e0b,#ef4444); }\n.bus-marker { min-width:52px; height:34px; display:flex; align-items:center; justify-content:center; gap:3px; background:white; color:#0f172a; border:3px solid #22c55e; border-radius:13px; font-weight:900; box-shadow:0 10px 24px rgba(2,6,23,.35); }\n.bus-marker span { font-size:10px; }\n.stop-marker { width:30px; height:30px; display:grid; place-items:center; border-radius:50%; background:#0f172a; color:white; border:3px solid #38bdf8; font-size:12px; font-weight:900; box-shadow:0 8px 16px rgba(2,6,23,.32); }\n.stop-marker.origin { border-color:#22c55e; }\n.stop-marker.dest { border-color:#ef4444; }\n.leaflet-popup-content { color:#0f172a; }\n.loading { display:grid; place-items:center; min-height:360px; color:#e5f2ff; text-align:center; }\n@media (max-width:1200px) { .kpi-grid { grid-template-columns:repeat(3,1fr); } .control-panel, .layout-grid { grid-template-columns:1fr 1fr; } .map-panel { grid-column:1/-1; } .cards-routes { grid-template-columns:repeat(2,1fr); } }\n@media (max-width:760px) { .topbar, .panel-title { flex-direction:column; align-items:flex-start; } .control-panel, .layout-grid, .kpi-grid, .cards-routes { grid-template-columns:1fr; } .map { height:380px; } }\n</style>\n",
         "storeOutMessages": true,
         "passthru": false,
         "resendOnRefresh": true,
@@ -1033,14 +959,14 @@
         "y": 390,
         "wires": [
             [
-                "fn_command"
+                "6407dadf246d5b8c"
             ]
         ]
     },
     {
-        "id": "debug_snapshot",
+        "id": "81a32c18a641b274",
         "type": "debug",
-        "z": "flow_buses_ff2_plus",
+        "z": "a16bf8cc0b1cfe29",
         "name": "Debug snapshot KPIs",
         "active": false,
         "tosidebar": true,
@@ -1055,9 +981,9 @@
         "wires": []
     },
     {
-        "id": "cmt_api",
+        "id": "db63c7f134fb13d8",
         "type": "comment",
-        "z": "flow_buses_ff2_plus",
+        "z": "a16bf8cc0b1cfe29",
         "name": "5) APIs locales para probar desde navegador/Postman",
         "info": "/api/buses/routes y /api/buses/telemetry devuelven JSON.",
         "x": 300,
@@ -1065,9 +991,9 @@
         "wires": []
     },
     {
-        "id": "http_routes",
+        "id": "2a21454cc7628d05",
         "type": "http in",
-        "z": "flow_buses_ff2_plus",
+        "z": "a16bf8cc0b1cfe29",
         "name": "GET /api/buses/routes",
         "url": "/api/buses/routes",
         "method": "get",
@@ -1077,14 +1003,14 @@
         "y": 550,
         "wires": [
             [
-                "fn_api_routes"
+                "54ffa3ba74755edd"
             ]
         ]
     },
     {
-        "id": "fn_api_routes",
+        "id": "54ffa3ba74755edd",
         "type": "function",
-        "z": "flow_buses_ff2_plus",
+        "z": "a16bf8cc0b1cfe29",
         "name": "API catálogo rutas",
         "func": "\nmsg.payload = {\n    ok: true,\n    count: (flow.get('bus.routes') || []).length,\n    routes: flow.get('bus.routes') || [],\n    note: 'Catálogo de rutas del dashboard. Los horarios son simulados.'\n};\nreturn msg;\n",
         "outputs": 1,
@@ -1097,14 +1023,14 @@
         "y": 550,
         "wires": [
             [
-                "http_resp_routes"
+                "536bee5a704ae1c3"
             ]
         ]
     },
     {
-        "id": "http_resp_routes",
+        "id": "536bee5a704ae1c3",
         "type": "http response",
-        "z": "flow_buses_ff2_plus",
+        "z": "a16bf8cc0b1cfe29",
         "name": "Responder rutas",
         "statusCode": "",
         "headers": {
@@ -1115,9 +1041,9 @@
         "wires": []
     },
     {
-        "id": "http_telemetry",
+        "id": "c1ca1009e94b6a16",
         "type": "http in",
-        "z": "flow_buses_ff2_plus",
+        "z": "a16bf8cc0b1cfe29",
         "name": "GET /api/buses/telemetry",
         "url": "/api/buses/telemetry",
         "method": "get",
@@ -1127,14 +1053,14 @@
         "y": 610,
         "wires": [
             [
-                "fn_api_telemetry"
+                "a37de4169145bb75"
             ]
         ]
     },
     {
-        "id": "fn_api_telemetry",
+        "id": "a37de4169145bb75",
         "type": "function",
-        "z": "flow_buses_ff2_plus",
+        "z": "a16bf8cc0b1cfe29",
         "name": "API telemetría",
         "func": "\nconst routes = flow.get('bus.routes') || [];\nconst fleet = flow.get('bus.fleet') || [];\nmsg.payload = {\n    ok: true,\n    timestamp: new Date().toISOString(),\n    running: flow.get('bus.running') !== false,\n    selectedRouteId: flow.get('bus.selectedRouteId'),\n    routes: routes.length,\n    buses: fleet.length,\n    telemetry: fleet\n};\nreturn msg;\n",
         "outputs": 1,
@@ -1147,14 +1073,14 @@
         "y": 610,
         "wires": [
             [
-                "http_resp_telemetry"
+                "2e2889386618dfe4"
             ]
         ]
     },
     {
-        "id": "http_resp_telemetry",
+        "id": "2e2889386618dfe4",
         "type": "http response",
-        "z": "flow_buses_ff2_plus",
+        "z": "a16bf8cc0b1cfe29",
         "name": "Responder telemetría",
         "statusCode": "",
         "headers": {
@@ -1165,9 +1091,9 @@
         "wires": []
     },
     {
-        "id": "cmt_test",
+        "id": "9d1045f1f5084732",
         "type": "comment",
-        "z": "flow_buses_ff2_plus",
+        "z": "a16bf8cc0b1cfe29",
         "name": "Pruebas rápidas",
         "info": "1) Deploy. 2) Abre /dashboard/buses. 3) Prueba /api/buses/routes y /api/buses/telemetry. 4) Si el mapa no aparece, revisa internet/CDN de Leaflet.",
         "x": 180,
