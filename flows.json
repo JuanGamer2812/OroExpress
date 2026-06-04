@@ -709,6 +709,16 @@
         "groupType": "default"
     },
     {
+        "id": "e277889d5ca931e3",
+        "type": "ui-group",
+        "name": "Configuración de Viaje",
+        "page": "ui-page-smarttransit",
+        "width": "4",
+        "height": "4",
+        "order": 3,
+        "className": ""
+    },
+    {
         "id": "b05f305bab8d74d5",
         "type": "inject",
         "z": "003c4fb1a3e749fb",
@@ -813,7 +823,7 @@
         "type": "ui-text",
         "z": "003c4fb1a3e749fb",
         "group": "ui-group-info",
-        "order": 2,
+        "order": 8,
         "width": 0,
         "height": 0,
         "name": "",
@@ -837,7 +847,7 @@
         "type": "ui-text",
         "z": "003c4fb1a3e749fb",
         "group": "ui-group-info",
-        "order": 3,
+        "order": 7,
         "width": 0,
         "height": 0,
         "name": "",
@@ -854,7 +864,7 @@
         "type": "ui-text",
         "z": "003c4fb1a3e749fb",
         "group": "ui-group-info",
-        "order": 4,
+        "order": 6,
         "width": 0,
         "height": 0,
         "name": "",
@@ -865,5 +875,181 @@
         "x": 900,
         "y": 440,
         "wires": []
+    },
+    {
+        "id": "698138607b1795cf",
+        "type": "ui-dropdown",
+        "z": "003c4fb1a3e749fb",
+        "group": "e277889d5ca931e3",
+        "name": "Select Origen",
+        "label": "🟢 Punto de Inicio",
+        "tooltip": "",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "multiple": false,
+        "clearable": false,
+        "options": [
+            {
+                "label": "Terminal Machala",
+                "value": 0,
+                "type": "num"
+            },
+            {
+                "label": "El Cambio",
+                "value": 1,
+                "type": "num"
+            },
+            {
+                "label": "Km 10 Panamericana",
+                "value": 2,
+                "type": "num"
+            },
+            {
+                "label": "Peaje El Guabo",
+                "value": 3,
+                "type": "num"
+            },
+            {
+                "label": "Entrada Santa Rosa",
+                "value": 4,
+                "type": "num"
+            },
+            {
+                "label": "Av Joffre Lima",
+                "value": 5,
+                "type": "num"
+            },
+            {
+                "label": "Terminal Santa Rosa",
+                "value": 6,
+                "type": "num"
+            }
+        ],
+        "payload": "",
+        "topic": "topic",
+        "topicType": "msg",
+        "className": "",
+        "x": 400,
+        "y": 200,
+        "wires": [
+            [
+                "4e7d0608f96a06a6"
+            ]
+        ]
+    },
+    {
+        "id": "e53a881352b7fefb",
+        "type": "ui-dropdown",
+        "z": "003c4fb1a3e749fb",
+        "group": "e277889d5ca931e3",
+        "name": "Select Destino",
+        "label": "🔴 Punto de Destino",
+        "tooltip": "",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "multiple": false,
+        "clearable": false,
+        "options": [
+            {
+                "label": "Terminal Machala",
+                "value": 0,
+                "type": "num"
+            },
+            {
+                "label": "El Cambio",
+                "value": 1,
+                "type": "num"
+            },
+            {
+                "label": "Km 10 Panamericana",
+                "value": 2,
+                "type": "num"
+            },
+            {
+                "label": "Peaje El Guabo",
+                "value": 3,
+                "type": "num"
+            },
+            {
+                "label": "Entrada Santa Rosa",
+                "value": 4,
+                "type": "num"
+            },
+            {
+                "label": "Av Joffre Lima",
+                "value": 5,
+                "type": "num"
+            },
+            {
+                "label": "Terminal Santa Rosa",
+                "value": 6,
+                "type": "num"
+            }
+        ],
+        "payload": "",
+        "topic": "topic",
+        "topicType": "msg",
+        "className": "",
+        "x": 400,
+        "y": 260,
+        "wires": [
+            [
+                "7cd674143a8b705e"
+            ]
+        ]
+    },
+    {
+        "id": "4e7d0608f96a06a6",
+        "type": "change",
+        "z": "003c4fb1a3e749fb",
+        "name": "Guardar Origen",
+        "rules": [
+            {
+                "t": "set",
+                "p": "origenIdx",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 600,
+        "y": 200,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "7cd674143a8b705e",
+        "type": "change",
+        "z": "003c4fb1a3e749fb",
+        "name": "Guardar Destino",
+        "rules": [
+            {
+                "t": "set",
+                "p": "destinoIdx",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 600,
+        "y": 260,
+        "wires": [
+            []
+        ]
     }
 ]
