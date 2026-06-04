@@ -723,7 +723,7 @@
         "once": true,
         "onceDelay": 0.5,
         "topic": "",
-        "x": 360,
+        "x": 420,
         "y": 360,
         "wires": [
             [
@@ -742,7 +742,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 610,
+        "x": 640,
         "y": 360,
         "wires": [
             [
@@ -773,13 +773,13 @@
         "order": 1,
         "width": 0,
         "height": 0,
-        "format": "<template>\n    <div style=\"padding: 5px;\">\n        <!-- Usamos ref en lugar de ID para que Vue 3 no se confunda -->\n        <div ref=\"mapContainer\" style=\"height: 480px; width: 100%; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); z-index: 1;\"></div>\n    </div>\n</template>\n\n<script>\nexport default {\n    data() {\n        return {\n            map: null,\n            marker: null,\n            rutaFija: [\n                [-3.2581, -79.9553], [-3.2845, -79.9612], [-3.3210, -79.9645],\n                [-3.3650, -79.9680], [-3.4120, -79.9650], [-3.4480, -79.9610],\n                [-3.4578, -79.9654]\n            ]\n        }\n    },\n    mounted() {\n        this.cargarDependencias();\n    },\n    methods: {\n        cargarDependencias() {\n            if (!document.getElementById('leaflet-css')) {\n                const link = document.createElement('link');\n                link.id = 'leaflet-css';\n                link.rel = 'stylesheet';\n                link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';\n                document.head.appendChild(link);\n            }\n\n            if (typeof L === 'undefined') {\n                const script = document.createElement('script');\n                script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';\n                script.onload = () => { this.iniciarMapa(); };\n                document.head.appendChild(script);\n            } else {\n                this.iniciarMapa();\n            }\n        },\n        iniciarMapa() {\n            // Verificar que el contenedor de Vue exista antes de pintar\n            if (!this.$refs.mapContainer) return;\n            \n            this.map = L.map(this.$refs.mapContainer).setView([-3.35, -79.96], 11);\n            \n            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {\n                attribution: '© OSMap'\n            }).addTo(this.map);\n\n            L.polyline(this.rutaFija, { color: '#2B6CB0', weight: 4, dashArray: '5, 10' }).addTo(this.map);\n\n            this.marker = L.marker([-3.2581, -79.9553]).addTo(this.map);\n            this.marker.bindPopup(\"Esperando señal GPS...\").openPopup();\n        }\n    },\n    watch: {\n        msg: {\n            handler(newMsg) {\n                if (newMsg && newMsg.payload && this.map && this.marker) {\n                    const data = newMsg.payload;\n                    if (data.lat && data.lon) {\n                        const pos = [data.lat, data.lon];\n                        this.marker.setLatLng(pos);\n                        this.map.panTo(pos);\n                        this.marker.bindPopup(`<b>Unidad: ${data.busId}</b><br>ETA: ${data.eta}`).openPopup();\n                    }\n                }\n            },\n            deep: true\n        }\n    }\n}\n</script>",
+        "format": "<template>\n    <div style=\"padding: 10px;\">\n        <div ref=\"mapaTransit\" style=\"height: 480px; width: 100%; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 1;\"></div>\n    </div>\n</template>\n\n<script>\nexport default {\n    data() {\n        return {\n            // Solo datos simples aquí, NUNCA objetos complejos como mapas de Leaflet\n            rutaFija: [\n                [-3.2581, -79.9553], [-3.2845, -79.9612], [-3.3210, -79.9645],\n                [-3.3650, -79.9680], [-3.4120, -79.9650], [-3.4480, -79.9610],\n                [-3.4578, -79.9654]\n            ]\n        }\n    },\n    mounted() {\n        // Variables NO reactivas (para que Vue 3 no rompa Leaflet)\n        this.mapaLeaflet = null;\n        this.marcadorBus = null;\n\n        // Inyectar CSS dinámico\n        if (!document.getElementById('leaflet-css-transit')) {\n            const link = document.createElement('link');\n            link.id = 'leaflet-css-transit';\n            link.rel = 'stylesheet';\n            link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';\n            document.head.appendChild(link);\n        }\n\n        // Inyectar JS dinámico con retraso de seguridad\n        if (typeof window.L === 'undefined') {\n            const script = document.createElement('script');\n            script.id = 'leaflet-js-transit';\n            script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';\n            script.onload = () => { \n                setTimeout(() => this.iniciarMapa(), 150); \n            };\n            document.head.appendChild(script);\n        } else {\n            setTimeout(() => this.iniciarMapa(), 150);\n        }\n    },\n    methods: {\n        iniciarMapa() {\n            // Prevenir doble inicialización\n            if (!this.$refs.mapaTransit || this.mapaLeaflet) return;\n\n            // Inicializar mapa centrado en la ruta\n            this.mapaLeaflet = window.L.map(this.$refs.mapaTransit).setView([-3.35, -79.96], 11);\n\n            window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {\n                attribution: '© OpenStreetMap'\n            }).addTo(this.mapaLeaflet);\n\n            window.L.polyline(this.rutaFija, { \n                color: '#2B6CB0', weight: 4, dashArray: '5, 10' \n            }).addTo(this.mapaLeaflet);\n\n            this.marcadorBus = window.L.marker([-3.2581, -79.9553]).addTo(this.mapaLeaflet);\n            this.marcadorBus.bindPopup(\"Esperando señal GPS...\").openPopup();\n\n            // Forzar reajuste de tamaño por si el contenedor cambió\n            setTimeout(() => { this.mapaLeaflet.invalidateSize(); }, 300);\n        }\n    },\n    watch: {\n        msg: {\n            handler(newMsg) {\n                if (newMsg && newMsg.payload && this.mapaLeaflet && this.marcadorBus) {\n                    const data = newMsg.payload;\n                    // Confirmar que llega el objeto completo de coordenadas\n                    if (typeof data === 'object' && data.lat && data.lon) {\n                        const pos = [data.lat, data.lon];\n                        this.marcadorBus.setLatLng(pos);\n                        this.mapaLeaflet.panTo(pos);\n                        \n                        const popup = `\n                            <div style=\"font-family: sans-serif; font-size: 13px;\">\n                                <strong style=\"color:#2B6CB0;\">Unidad: ${data.busId}</strong><br>\n                                <b>Velocidad:</b> ${data.velocidad}<br>\n                                <b style=\"color:#E53E3E;\">ETA: ${data.eta}</b>\n                            </div>`;\n                        this.marcadorBus.bindPopup(popup).openPopup();\n                    }\n                }\n            },\n            deep: true\n        }\n    },\n    unmounted() {\n        // Limpiar la memoria si el usuario cambia de página en el dashboard\n        if (this.mapaLeaflet) {\n            this.mapaLeaflet.remove();\n            this.mapaLeaflet = null;\n        }\n    }\n}\n</script>",
         "storeOutMessages": true,
         "passthru": true,
         "templateScope": "local",
         "className": "",
-        "x": 890,
-        "y": 260,
+        "x": 880,
+        "y": 280,
         "wires": [
             []
         ]
@@ -828,8 +828,8 @@
         "className": "",
         "value": "payload",
         "valueType": "msg",
-        "x": 870,
-        "y": 380,
+        "x": 860,
+        "y": 360,
         "wires": []
     },
     {
@@ -846,7 +846,7 @@
         "layout": "row-spread",
         "className": "",
         "x": 880,
-        "y": 440,
+        "y": 400,
         "wires": []
     },
     {
@@ -863,7 +863,7 @@
         "layout": "row-spread",
         "className": "",
         "x": 900,
-        "y": 500,
+        "y": 440,
         "wires": []
     }
 ]
