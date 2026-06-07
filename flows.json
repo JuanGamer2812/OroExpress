@@ -1094,7 +1094,7 @@
         "id": "9d1045f1f5084732",
         "type": "comment",
         "z": "a16bf8cc0b1cfe29",
-        "name": "Pruebas rápidas",
+        "name": "Pruebas rápidas.",
         "info": "1) Deploy. 2) Abre /dashboard/buses. 3) Prueba /api/buses/routes y /api/buses/telemetry. 4) Si el mapa no aparece, revisa internet/CDN de Leaflet.",
         "x": 180,
         "y": 700,
