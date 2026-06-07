@@ -1,12 +1,10 @@
 {
     "name": "OroExpress",
     "description": "Buses",
-    "version": "0.0.1",
+    "version": "1.5",
     "dependencies": {
-        "node-red-dashboard": "3.6.6",
         "@flowfuse/node-red-dashboard": "1.30.2",
-        "node-red-node-mysql": "3.0.0",
-        "node-red-contrib-web-worldmap": "5.8.0"
+        "node-red-node-mysql": "3.0.0"
     },
     "node-red": {
         "settings": {
