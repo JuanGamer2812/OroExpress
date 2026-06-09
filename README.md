@@ -65,5 +65,5 @@ Para ejecutar este flujo en tu entorno local, necesitas tener instalado:
 
 <div align="right">
   <b>Juan Pablo Añazco Lapo, Carlos Enrique Espinoza Cevallos</b><br>
-  <i>Estudiantes de Tecnologías de la Información</i>
+  <i>Estudiantes de Tecnologías de la Información - 6to "B"</i>
 </div>
